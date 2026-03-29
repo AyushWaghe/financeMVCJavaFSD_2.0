@@ -1,5 +1,7 @@
 package org.example.controllers;
 
+import jakarta.validation.Valid;
+import org.example.dto.AuthRequest;
 import org.example.dto.AuthResponse;
 import org.example.models.User;
 import org.example.services.AuthService;
@@ -23,11 +25,8 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<AuthResponse> registerUser(@RequestBody Map<String,String> req){
-        String useremail=req.get("useremail");
-        String password=req.get("password");
-
-        AuthResponse authResponse=authService.registerUser(useremail,password);
+    public ResponseEntity<AuthResponse> registerUser(@Valid @RequestBody AuthRequest authRequest){
+        AuthResponse authResponse=authService.registerUser(authRequest);
 
         if(authResponse.isSuccess()){
             return new ResponseEntity<>(authResponse, HttpStatus.CREATED);
