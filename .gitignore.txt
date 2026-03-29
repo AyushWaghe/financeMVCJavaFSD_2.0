@@ -1,0 +1,21 @@
+# Build files
+target/
+build/
+
+# Logs
+*.log
+
+# Compiled files
+*.class
+
+# Packaged files
+*.jar
+*.war
+
+# IntelliJ files
+.idea/
+*.iml
+out/
+
+# Environment variables
+.env

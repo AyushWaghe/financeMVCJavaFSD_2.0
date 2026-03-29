@@ -1,0 +1,8 @@
+org\example\models\Transactions.class
+org\example\enums\TransactionType.class
+org\example\models\User.class
+org\example\enums\SpendingType.class
+org\example\models\UserDetails.class
+org\example\App.class
+org\example\models\Category.class
+org\example\controllers\AuthController.class
