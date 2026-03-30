@@ -15,8 +15,8 @@ public class AuthService {
     @Autowired
     UserRepository userRepository;
 
-    public AuthResponse registerUser(AuthRequest authRequest){
-        try {
+    public AuthResponse registerUser(AuthRequest authRequest) {
+
             String useremail= authRequest.getUseremail();
 
             if(userRepository.existsByUseremail(useremail)){
@@ -25,18 +25,11 @@ public class AuthService {
 
             String password =authRequest.getPassword();
             UserDetail userDetail=new UserDetail();
-            User user=new User(useremail, password, userDetail);
+            User user=new User(password, useremail, userDetail);
             userDetail.setUser(user);
             User savedUser=userRepository.save(user);
 
             return new AuthResponse(true,savedUser.getUserId(),useremail,"User saved successfully");
-        }catch (UserExistsException e){
-            System.out.println(e);
-            return new AuthResponse(false,null,null,e.toString());
-        }catch (Exception e){
-            System.out.println(e);
-            return new AuthResponse(false,null,null,e.toString());
-        }
 
     }
 }

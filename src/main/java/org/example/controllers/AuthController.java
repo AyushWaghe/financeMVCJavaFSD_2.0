@@ -3,6 +3,7 @@ package org.example.controllers;
 import jakarta.validation.Valid;
 import org.example.dto.AuthRequest;
 import org.example.dto.AuthResponse;
+import org.example.exceptions.UserExistsException;
 import org.example.models.User;
 import org.example.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
