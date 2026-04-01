@@ -9,6 +9,8 @@ import org.example.models.UserDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class AuthService {
 
@@ -31,5 +33,15 @@ public class AuthService {
 
             return new AuthResponse(true,savedUser.getUserId(),useremail,"User saved successfully");
 
+    }
+
+    public AuthResponse loginUser(AuthRequest authRequest) {
+        Optional<User> user=userRepository.findByUseremail(authRequest.getUseremail());
+
+        if(user.isEmpty() || !user.get().getPassword().equals(authRequest.getPassword())){
+            return new AuthResponse(false,null,null,"Incorrect username or password");
+        }
+
+        return new AuthResponse(true,user.get().getUserId(), user.get().getUseremail(),"Authentication successfull");
     }
 }

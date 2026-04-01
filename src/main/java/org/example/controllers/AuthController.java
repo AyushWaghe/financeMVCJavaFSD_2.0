@@ -35,4 +35,15 @@ public class AuthController {
             return new ResponseEntity<>(authResponse,HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("/signin")
+    public ResponseEntity<AuthResponse> loginUser(@Valid @RequestBody AuthRequest authRequest){
+        AuthResponse authResponse=authService.loginUser(authRequest);
+
+        if(authResponse.isSuccess()){
+            return new ResponseEntity<>(authResponse,HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(authResponse,HttpStatus.UNAUTHORIZED);
+        }
+    }
 }
