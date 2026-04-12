@@ -38,7 +38,4 @@ public class UserDetail {
 
     @Column(name="savings")
     private Integer savings;
-
-
-
 }
