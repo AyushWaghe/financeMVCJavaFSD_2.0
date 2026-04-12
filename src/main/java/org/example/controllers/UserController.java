@@ -1,6 +1,7 @@
 package org.example.controllers;
 
 import jakarta.validation.Valid;
+import org.example.dto.APIResponse;
 import org.example.dto.UserDetailRequest;
 import org.example.dto.UserDetailsResponse;
 import org.example.models.UserDetail;
@@ -19,23 +20,40 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @GetMapping
+    @GetMapping("/{id}")
     @ResponseBody
-    public ResponseEntity<UserDetailsResponse> getUserDetails(@RequestParam("userid") int id){
-        Optional<UserDetail> userDetail=userService.getUserDetails(id);
+    public ResponseEntity<UserDetailsResponse> getUserDetails(@PathVariable int id){
+        UserDetail userDetail=userService.getUserDetails(id);
+        UserDetailsResponse userDetailsResponse=new UserDetailsResponse(
+                userDetail.getNeeds(),
+                userDetail.getWants(),
+                userDetail.getSavings(),
+                userDetail.getTotalBal(),
+                userDetail.getAddress(),
+                userDetail.getUsername()
+                );
+        return new ResponseEntity<>(userDetailsResponse,HttpStatus.OK);
+    }
 
-        if (userDetail.isEmpty()) return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    @PutMapping()
+    public ResponseEntity<APIResponse<UserDetailsResponse>> saveUserDetails(@Valid @RequestBody UserDetailRequest userDetailRequest){
+        UserDetail userDetail=userService.saveUserDetails(userDetailRequest);
 
         UserDetailsResponse userDetailsResponse=new UserDetailsResponse(
-                userDetail.get().getNeeds(),
-                userDetail.get().getWants(),
-                userDetail.get().getSavings(),
-                userDetail.get().getTotalBal(),
-                userDetail.get().getAddress(),
-                userDetail.get().getUsername()
-                );
+                userDetail.getNeeds(),
+                userDetail.getWants(),
+                userDetail.getSavings(),
+                userDetail.getTotalBal(),
+                userDetail.getAddress(),
+                userDetail.getUsername()
+        );
 
-        return new ResponseEntity<>(userDetailsResponse,HttpStatus.OK);
+        APIResponse apiResponse=new APIResponse();
+        apiResponse.setData(userDetailsResponse);
+        apiResponse.setMessage("User details saved successfully");
+        apiResponse.isSuccess();
+
+        return new ResponseEntity<>(apiResponse,HttpStatus.CREATED);
 
     }
 }
