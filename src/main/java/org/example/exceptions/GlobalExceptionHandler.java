@@ -13,12 +13,21 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+
+    //Custom exceptions-----------------------------------------------------------------------------------------------
     @ExceptionHandler(UserExistsException.class)
     public ResponseEntity<ErrorResponse> userExistsException(UserExistsException e){
         ErrorResponse err=new ErrorResponse(409,"User already exists","CONFLICT");
         return new ResponseEntity<>(err, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(UserDetailNotFoundException.class)
+    public ResponseEntity<ErrorResponse> userDetailNotFound(UserDetailNotFoundException e){
+        ErrorResponse err=new ErrorResponse(404,"User details not found","NOT_FOUND");
+        return new ResponseEntity<>(err,HttpStatus.NOT_FOUND);
+    }
+
+    //General exception---------------------------------------------------------------------------------------------
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> generalException(Exception e){
         System.out.println(e);
@@ -30,6 +39,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(err,HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    //Method exceptions-------------------------------------------------------------------------------------------------
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> invalidMethodArgument(MethodArgumentNotValidException e){
         ErrorResponse err=new ErrorResponse(
