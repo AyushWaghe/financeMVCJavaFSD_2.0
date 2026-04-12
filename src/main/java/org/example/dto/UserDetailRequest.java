@@ -1,6 +1,7 @@
 package org.example.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -8,7 +9,8 @@ import java.math.BigDecimal;
 @Data
 public class UserDetailRequest {
 
-    @NotBlank(message = "User id cannot be null")
+//    @NotBlank(message = "User id cannot be null")---> This is for strings only for Integer follow the below
+    @NotNull(message = "User id cannot be null")
     private Integer id;
 
     private Integer needs;
