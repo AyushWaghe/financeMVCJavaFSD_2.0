@@ -12,11 +12,13 @@ public class ErrorResponse {
     private String error;
     private Map<String,String> fieldErrors;
     private LocalDateTime timestamp;
+    boolean success;
 
     public ErrorResponse(int statusCode, String message, String error) {
         this.statusCode = statusCode;
         this.message = message;
         this.error = error;
         this.timestamp = LocalDateTime.now();
+        this.success=false;
     }
 }
