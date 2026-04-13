@@ -53,7 +53,7 @@ public class UserController {
         apiResponse.setMessage("User details saved successfully");
         apiResponse.setSuccess(true);
 
-        return new ResponseEntity<>(apiResponse,HttpStatus.CREATED);
+        return new ResponseEntity<>(apiResponse,HttpStatus.OK);
 
     }
 }
