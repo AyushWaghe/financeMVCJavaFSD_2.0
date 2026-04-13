@@ -48,10 +48,10 @@ public class UserController {
                 userDetail.getUsername()
         );
 
-        APIResponse apiResponse=new APIResponse();
+        APIResponse<UserDetailsResponse> apiResponse=new APIResponse<>();
         apiResponse.setData(userDetailsResponse);
         apiResponse.setMessage("User details saved successfully");
-        apiResponse.isSuccess();
+        apiResponse.setSuccess(true);
 
         return new ResponseEntity<>(apiResponse,HttpStatus.CREATED);
 
