@@ -33,7 +33,7 @@ public class UserService {
 
     public UserDetail saveUserDetails(UserDetailRequest userDetailRequest) {
         User user=userRepository.getReferenceById(userDetailRequest.getId());
-        UserDetail userDetail=userDetailsRepository.findById(userDetailRequest.getId()).orElseThrow(new UserDetailNotFoundException("s"));
+        UserDetail userDetail=userDetailsRepository.findById(userDetailRequest.getId()).orElseThrow(()-> new UserDetailNotFoundException("User details not found"));
         userDetail.setUser(user);
         userDetail.setAddress(userDetailRequest.getAddress());
         userDetail.setUsername(userDetailRequest.getName());
@@ -42,8 +42,6 @@ public class UserService {
         userDetail.setWants(userDetailRequest.getWants());
         userDetail.setNeeds(userDetailRequest.getNeeds());
 
-        UserDetail userDetail1=userDetailsRepository.save(userDetail);
-
-        return userDetail;
+        return userDetailsRepository.save(userDetail);
     }
 }
