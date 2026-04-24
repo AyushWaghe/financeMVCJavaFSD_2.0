@@ -23,12 +23,12 @@ public class TransactionRequest {
     private String description;
 
     @NotNull(message = "Transaction amount cannot be null")
-    @DecimalMin(value = "0.0",inclusive = false,message = "Transaction amount must be greater then 0")
+    @DecimalMin(value = "0.0",inclusive = false,message = "Transaction amount must be greater than 0")
     @DecimalMax(value = "10000000.0",inclusive = false,message = "Transaction amount must be less that 1cr")
     private BigDecimal amount;
 
 //    @NotNull(message = "Transaction category cannot be blank")
-    private Category category;
+    private String category;
 
     @NotNull(message = "Transaction date cannot be blank")
     @PastOrPresent(message = "Transaction date cannot be a future date")

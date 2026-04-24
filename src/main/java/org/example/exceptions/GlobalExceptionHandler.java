@@ -33,6 +33,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<ErrorResponse> nullPointerExp(NullPointerException e){
         ErrorResponse err=new ErrorResponse(409,"User already exists","CONFLICT");
+        System.out.println(e);
         return new ResponseEntity<>(err, HttpStatus.BAD_REQUEST);
     }
 

@@ -1,5 +1,6 @@
 package org.example.controllers;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.Valid;
 import org.example.dto.APIResponse;
 import org.example.dto.TransactionRequest;
@@ -12,6 +13,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/transactions")
@@ -23,9 +27,13 @@ public class TransactionController {
     @PostMapping()
     public ResponseEntity<APIResponse<Void>> saveTransaction(@Valid @RequestBody TransactionRequest transactionRequest){
         Transaction tr=transactionService.saveTransaction(transactionRequest);
-        APIResponse apiResponse=new APIResponse();
+        APIResponse<Void> apiResponse=new APIResponse();
         apiResponse.setSuccess(true);
         apiResponse.setMessage("Transaction saved successfully");
         return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+    }
+
+    public ResponseEntity<APIResponse<List<Transaction>>> getTransactions(@RequestParam Integer userId, @RequestParam String month){
+        List<Transaction> transactions=transactionService.getTransactions();
     }
 }
