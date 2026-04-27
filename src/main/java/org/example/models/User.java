@@ -39,8 +39,8 @@ public class User {
     //Now user can access the user details fields like for example user address field. This is possible since one to one mapping is eager
     private UserDetail userDetails;
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
-    private List<Transaction> transactions;
+//    @OneToMany(mappedBy = "user",cascade = CascadeType.REMOVE)
+//    private List<Transaction> transactions;
 
     public User(String password, String useremail, UserDetail userDetails) {
         this.password = password;

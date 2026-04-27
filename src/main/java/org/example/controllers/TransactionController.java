@@ -4,17 +4,16 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.Valid;
 import org.example.dto.APIResponse;
 import org.example.dto.TransactionRequest;
+import org.example.dto.TransactionResponse;
 import org.example.models.Transaction;
 import org.example.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -33,7 +32,13 @@ public class TransactionController {
         return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
     }
 
-    public ResponseEntity<APIResponse<List<Transaction>>> getTransactions(@RequestParam Integer userId, @RequestParam String month){
-        List<Transaction> transactions=transactionService.getTransactions();
+    @GetMapping()
+    public ResponseEntity<APIResponse<List<TransactionResponse>>> getTransactions(@RequestParam Integer userId, @RequestParam(required = false) LocalDate startDate, @RequestParam(required = false) LocalDate endDate){
+        List<TransactionResponse> transactionResponses=transactionService.getTransactions(userId,startDate,endDate);
+        APIResponse<List<TransactionResponse>> apiResponse=new APIResponse<>();
+        apiResponse.setData(transactionResponses);
+        apiResponse.setSuccess(true);
+        apiResponse.setMessage("Transactions fetched successfully");
+        return new ResponseEntity<>(apiResponse,HttpStatus.OK);
     }
 }
