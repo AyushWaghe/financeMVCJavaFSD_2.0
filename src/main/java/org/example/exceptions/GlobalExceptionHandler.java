@@ -7,7 +7,9 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -91,6 +93,20 @@ public class GlobalExceptionHandler {
         err.setFieldErrors(errors);
 
         return new ResponseEntity<>(err,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> methodArgMismatch(MethodArgumentTypeMismatchException e){
+
+        ErrorResponse errorResponse=new ErrorResponse(0,e.getMessage(),"BAD_REQUEST");
+
+        if(e.getRequiredType()== LocalDate.class){
+            errorResponse.setStatusCode(400);
+            errorResponse.setMessage("Invalid date format. Expected yyyy-mm-dd");
+            errorResponse.setError("BAD_REQUEST");
+        }
+
+        return new ResponseEntity<>(errorResponse,HttpStatus.BAD_REQUEST);
     }
 
 }
