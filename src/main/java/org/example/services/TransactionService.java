@@ -4,6 +4,7 @@ import org.example.dao.CategoryRepository;
 import org.example.dao.TransactionRepository;
 import org.example.dao.UserRepository;
 import org.example.dto.TransactionRequest;
+import org.example.dto.TransactionResponse;
 import org.example.exceptions.UserDetailNotFoundException;
 import org.example.models.Category;
 import org.example.models.Transaction;
@@ -14,6 +15,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,11 +56,40 @@ public class TransactionService {
         return transactionRepository.save(transaction);
     }
 
-    public List<Transaction> getTransactions(Integer userId,String month) {
+    public List<TransactionResponse> getTransactions(Integer userId, LocalDate startDate,LocalDate endDate) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserDetailNotFoundException("User with id "+userId+" not found"));
 
-        List<Transaction> transactions;
-        
+        if(startDate!=null && endDate!=null && startDate.isAfter(endDate)){
+            throw new IllegalArgumentException("Start date cannot be after end date.");
+        }
+
+        LocalDate today=LocalDate.now();
+        LocalDateTime startDateTime,endDateTime;
+        if(startDate==null){
+            startDateTime=today.withDayOfMonth(1).atStartOfDay();
+        }else{
+            startDateTime=startDate.atStartOfDay();
+        }
+        if(endDate==null){
+            endDateTime=today.atTime(23,59,59);
+        }else {
+            endDateTime=endDate.atTime(23,59,59);
+        }
+
+        List<Transaction> transactions=transactionRepository.findByUser_UserIdAndTransactionDateBetween(user.getUserId(),startDateTime,endDateTime);
+        List<TransactionResponse> transactionList=transactions.stream().map(t-> new TransactionResponse(
+                t.getTitle(),
+                t.getDescription(),
+                t.getAmount(),
+                t.getCategory().getTitle(),
+                t.getTransactionDate(),
+                t.getType(),
+                t.getSpendingType()
+            )
+        ).toList();
+
+        return transactionList;
+
     }
 }
