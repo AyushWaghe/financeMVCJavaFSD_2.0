@@ -41,4 +41,13 @@ public class TransactionController {
         apiResponse.setMessage("Transactions fetched successfully");
         return new ResponseEntity<>(apiResponse,HttpStatus.OK);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<APIResponse<Void>> updateTransaction(@Valid @RequestBody TransactionRequest transactionRequest,@PathVariable("id") Integer id){
+        transactionService.updateTransaction(transactionRequest,id);
+        APIResponse<Void> apiResponse=new APIResponse<>();
+        apiResponse.setSuccess(true);
+        apiResponse.setMessage("Transaction updated successfully");
+        return new ResponseEntity<>(apiResponse,HttpStatus.OK);
+    }
 }
