@@ -5,6 +5,7 @@ import org.example.dao.TransactionRepository;
 import org.example.dao.UserRepository;
 import org.example.dto.TransactionRequest;
 import org.example.dto.TransactionResponse;
+import org.example.exceptions.ResourceNotFoundException;
 import org.example.exceptions.TransactionNotFoundException;
 import org.example.exceptions.UserDetailNotFoundException;
 import org.example.models.Category;
@@ -12,6 +13,7 @@ import org.example.models.Transaction;
 import org.example.models.User;
 import org.example.utils.CategoryUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
@@ -112,5 +114,13 @@ public class TransactionService {
         transaction.setSpendingType(transactionRequest.getSpendingType());
 
         transactionRepository.save(transaction);
+    }
+
+    public void deleteTransaction(Integer tId) {
+        int rows=transactionRepository.deleteTransactionById(tId);
+
+        if(rows==0){
+            throw new ResourceNotFoundException("Transaction with id "+tId+" not found");
+        }
     }
 }
