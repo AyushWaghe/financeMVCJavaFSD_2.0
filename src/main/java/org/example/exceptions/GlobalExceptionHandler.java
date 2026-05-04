@@ -30,6 +30,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(err,HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(TransactionNotFoundException.class)
+    public ResponseEntity<ErrorResponse> transactionNotFound(TransactionNotFoundException e){
+        ErrorResponse err=new ErrorResponse(404,e.getMessage(),"NOT_FOUND");
+        return new ResponseEntity<>(err,HttpStatus.NOT_FOUND);
+    }
+
     //In-build exception----------------------------------------------------------------------------------------------
 
     @ExceptionHandler(NullPointerException.class)
