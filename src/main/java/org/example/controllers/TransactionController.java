@@ -50,4 +50,13 @@ public class TransactionController {
         apiResponse.setMessage("Transaction updated successfully");
         return new ResponseEntity<>(apiResponse,HttpStatus.OK);
     }
+
+    @DeleteMapping("/{tid}")
+    public ResponseEntity<APIResponse<Void>> deleteTransaction(@PathVariable("tid") Integer tId){
+        transactionService.deleteTransaction(tId);
+        APIResponse<Void> apiResponse=new APIResponse<>();
+        apiResponse.setSuccess(true);
+        apiResponse.setMessage("Transaction delete successfully");
+        return new ResponseEntity<>(apiResponse,HttpStatus.OK);
+    }
 }

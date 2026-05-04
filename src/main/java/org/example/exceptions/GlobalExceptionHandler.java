@@ -1,6 +1,7 @@
 package org.example.exceptions;
 
 import org.example.dto.ErrorResponse;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -22,6 +23,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> userExistsException(UserExistsException e){
         ErrorResponse err=new ErrorResponse(409,"User already exists","CONFLICT");
         return new ResponseEntity<>(err, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> resourceNotFound(ResourceNotFoundException e){
+        ErrorResponse err=new ErrorResponse(404,e.getMessage(),"NOT_FOUND");
+        return new ResponseEntity<>(err, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(UserDetailNotFoundException.class)
@@ -70,6 +77,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> illegalArgException(IllegalArgumentException e){
         ErrorResponse err=new ErrorResponse(409,e.getMessage(),"BAD_REQUEST");
         return new ResponseEntity<>(err, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EmptyResultDataAccessException.class)
+    public ResponseEntity<ErrorResponse> dataNotFoundInDBException(EmptyResultDataAccessException e){
+        ErrorResponse err=new ErrorResponse(404,e.getMessage(),"NOT_FOUND");
+        return new ResponseEntity<>(err,HttpStatus.NOT_FOUND);
     }
 
     //General exception---------------------------------------------------------------------------------------------
