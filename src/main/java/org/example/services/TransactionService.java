@@ -5,6 +5,7 @@ import org.example.dao.TransactionRepository;
 import org.example.dao.UserRepository;
 import org.example.dto.TransactionRequest;
 import org.example.dto.TransactionResponse;
+import org.example.exceptions.TransactionNotFoundException;
 import org.example.exceptions.UserDetailNotFoundException;
 import org.example.models.Category;
 import org.example.models.Transaction;
@@ -91,5 +92,25 @@ public class TransactionService {
 
         return transactionList;
 
+    }
+
+    public void updateTransaction(TransactionRequest transactionRequest, Integer id) {
+        Transaction transaction=transactionRepository.findById(id).orElseThrow(()->new TransactionNotFoundException("User with id "+transactionRequest.getUserId()+" not found"));
+
+        if(!transaction.getUser().getUserId().equals(transactionRequest.getUserId())){
+            throw new IllegalArgumentException("User id from transaction "+transaction.getUser().getUserId()+" and transaction request "+transactionRequest.getUserId()+ " did not match");
+        }
+
+        Category category=categoryService.findOrCreateCategory(transaction.getUser(),transactionRequest.getCategory());
+
+        transaction.setTitle(transactionRequest.getTitle());
+        transaction.setDescription(transactionRequest.getDescription());
+        transaction.setAmount(transactionRequest.getAmount());
+        transaction.setCategory(category);
+        transaction.setTransactionDate(transactionRequest.getTransactionDate());
+        transaction.setType(transactionRequest.getType());
+        transaction.setSpendingType(transactionRequest.getSpendingType());
+
+        transactionRepository.save(transaction);
     }
 }
