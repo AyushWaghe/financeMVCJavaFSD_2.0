@@ -6,6 +6,7 @@ import org.example.dto.AuthResponse;
 import org.example.exceptions.UserExistsException;
 import org.example.models.User;
 import org.example.services.AuthService;
+import org.example.services.UserDetailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,9 @@ public class AuthController {
     @Autowired
     AuthService authService;
 
+    @Autowired
+    UserDetailServiceImpl userDetailServiceImpl;
+
     @GetMapping("/test")
     public String testSite(){
         return "Spring working correctly";
@@ -27,7 +31,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<AuthResponse> registerUser(@Valid @RequestBody AuthRequest authRequest){
-        AuthResponse authResponse=authService.registerUser(authRequest);
+        AuthResponse authResponse= userDetailServiceImpl.registerUser(authRequest);
 
         if(authResponse.isSuccess()){
             return new ResponseEntity<>(authResponse, HttpStatus.CREATED);

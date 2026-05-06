@@ -7,41 +7,35 @@ import org.example.exceptions.UserExistsException;
 import org.example.models.User;
 import org.example.models.UserDetail;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-public class AuthService {
+public class AuthService {  //Login
 
     @Autowired
-    UserRepository userRepository;
-
-    public AuthResponse registerUser(AuthRequest authRequest) {
-
-            String useremail= authRequest.getUseremail();
-
-            if(userRepository.existsByUseremail(useremail)){
-                throw new UserExistsException("User with this email already exists");
-            }
-
-            String password =authRequest.getPassword();
-            UserDetail userDetail=new UserDetail();
-            User user=new User(password, useremail, userDetail);
-            userDetail.setUser(user);
-            User savedUser=userRepository.save(user);
-
-            return new AuthResponse(true,savedUser.getUserId(),useremail,"User saved successfully");
-
-    }
+    AuthenticationManager  authenticationManager;
 
     public AuthResponse loginUser(AuthRequest authRequest) {
-        Optional<User> user=userRepository.findByUseremail(authRequest.getUseremail());
+        try {
+            authenticationManager.authenticate( //This calls load by username internally
+                    new UsernamePasswordAuthenticationToken(
+                            authRequest.getUseremail(),
+                            authRequest.getPassword()
+                    )
+            );
 
-        if(user.isEmpty() || !user.get().getPassword().equals(authRequest.getPassword())){
-            return new AuthResponse(false,null,null,"Incorrect username or password");
+            return new AuthResponse(true,null, authRequest.getUseremail(), "Login successful");
+        }catch (BadCredentialsException e){
+            return new AuthResponse(false,null,"","Login Unsuccessful");
         }
-
-        return new AuthResponse(true,user.get().getUserId(), user.get().getUseremail(),"Authentication successfull");
     }
 }
