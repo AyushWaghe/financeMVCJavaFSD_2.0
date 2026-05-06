@@ -6,5 +6,6 @@ public enum BillRecurrence {
     MONTHLY,
     QUATERLY,
     HALF_YEARLY,
-    YEARLY
+    YEARLY,
+    NONE
 }

@@ -68,6 +68,12 @@ public class GlobalExceptionHandler {
         if(e.getCause()!=null && e.getCause().getMessage().contains("LocalDateTime")) {
             message = "Invalid Date format";
         }
+        if(e.getCause()!=null && e.getCause().getMessage().contains("BillRecurrence")) {
+            message = "Invalid bill recurrence type. Allowed values: DAILY,WEEKLY,MONTHLY,QUATERLY,HALF-YEARLY,YEARLY";
+        }
+        if(e.getCause()!=null && e.getCause().getMessage().contains("BillStatus")) {
+            message = "Invalid bill spending type. Allowed values: PENDING,OVERDUE,PAID";
+        }
 
         ErrorResponse err=new ErrorResponse(409,message,"CONFLICT");
         return new ResponseEntity<>(err, HttpStatus.BAD_REQUEST);
