@@ -1,10 +1,12 @@
 package org.example.services;
 
+import lombok.RequiredArgsConstructor;
 import org.example.dao.UserRepository;
 import org.example.dto.AuthRequest;
 import org.example.dto.AuthResponse;
 import org.example.exceptions.UserExistsException;
 import org.example.models.UserDetail;
+import org.example.security.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserDetailServiceImpl implements UserDetailsService { //Signup
 
     @Autowired
@@ -26,6 +29,10 @@ public class UserDetailServiceImpl implements UserDetailsService { //Signup
 
     @Autowired
     PasswordEncoder passwordEncoder;  //This bean is injected/autowired from the spring security config which we have created
+
+    @Autowired
+    private final JwtService jwtService;
+
 
     public AuthResponse registerUser(AuthRequest authRequest) {
 
@@ -40,8 +47,9 @@ public class UserDetailServiceImpl implements UserDetailsService { //Signup
         org.example.models.User user=new org.example.models.User(encodedPassword, useremail, userDetail);
         userDetail.setUser(user);
         org.example.models.User savedUser=userRepository.save(user);
+        String token=jwtService.generateAccessToken(user);
 
-        return new AuthResponse(true,savedUser.getUserId(),useremail,"User saved successfully");
+        return new AuthResponse(true,savedUser.getUserId(),useremail,"User saved successfully",token);
 
     }
 

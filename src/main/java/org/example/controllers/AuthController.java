@@ -31,7 +31,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<AuthResponse> registerUser(@Valid @RequestBody AuthRequest authRequest){
-        AuthResponse authResponse= userDetailServiceImpl.registerUser(authRequest);
+        AuthResponse authResponse=  userDetailServiceImpl.registerUser(authRequest);
 
         if(authResponse.isSuccess()){
             return new ResponseEntity<>(authResponse, HttpStatus.CREATED);
