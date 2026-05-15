@@ -22,5 +22,5 @@ public interface BillRepository extends JpaRepository<Bill, Integer> {
      Start a DB transaction → run this method → commit if success → rollback if failure
      */
     @Query("DELETE FROM Bill b WHERE b.id= :id")
-    int deleteTransactionById(Integer id);
+    int deleteBillById(Integer id);
 }

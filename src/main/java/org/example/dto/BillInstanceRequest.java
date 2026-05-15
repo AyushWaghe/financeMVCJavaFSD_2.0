@@ -10,7 +10,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
-public class BillRequest {
+public class BillInstanceRequest {
+
+    private Integer billInstanceId;
 
     @NotNull
     private Integer userId;
@@ -28,8 +30,8 @@ public class BillRequest {
     @FutureOrPresent(message = "Due date cannot be in the past")
     private LocalDate dueDate;
 
-//    @NotNull
-    private BillRecurrence billRecurrence;
+    @NotNull
+    private BillStatus billStatus;
 
     private Integer billId; //Template id of the bill
 }

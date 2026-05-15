@@ -3,8 +3,7 @@ package org.example.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.enums.BillStatus;
 
 import java.math.BigDecimal;
@@ -13,6 +12,9 @@ import java.time.LocalDate;
 @Entity
 @NoArgsConstructor
 @Data
+@Builder
+@Getter
+@AllArgsConstructor
 @Table(name = "bill_instances")
 public class BillInstance {
 
@@ -43,7 +45,7 @@ public class BillInstance {
     private LocalDate dueDate;
 
     @NotNull
-    @Enumerated
+    @Enumerated(EnumType.STRING) //Need this else jpa will save the data in integer format
     @Column(name = "status")
     BillStatus billStatus;
 
