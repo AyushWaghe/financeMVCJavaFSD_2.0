@@ -25,12 +25,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(err, HttpStatus.CONFLICT);
     }
 
-
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> resourceNotFound(ResourceNotFoundException e){
         ErrorResponse err=new ErrorResponse(404,e.getMessage(),"NOT_FOUND");
         return new ResponseEntity<>(err, HttpStatus.NOT_FOUND);
     }
+
 
     @ExceptionHandler(TransactionNotFoundException.class)
     public ResponseEntity<ErrorResponse> transactionNotFound(TransactionNotFoundException e){
@@ -70,6 +70,7 @@ public class GlobalExceptionHandler {
             message = "Invalid bill spending type. Allowed values: PENDING,OVERDUE,PAID";
         }
 
+
         ErrorResponse err=new ErrorResponse(409,message,"CONFLICT");
         return new ResponseEntity<>(err, HttpStatus.BAD_REQUEST);
     }
@@ -80,7 +81,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(err, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(EmptyResultDataAccessException.class)
     public ResponseEntity<ErrorResponse> dataNotFoundInDBException(EmptyResultDataAccessException e) {
         ErrorResponse err = new ErrorResponse(404, e.getMessage(), "NOT_FOUND");
         return new ResponseEntity<>(err, HttpStatus.NOT_FOUND);
