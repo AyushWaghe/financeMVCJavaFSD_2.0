@@ -1,0 +1,49 @@
+* [33m244f610[m[33m ([m[1;31morigin/feature/analytics[m[33m, [m[1;32mfeature/analytics[m[33m)[m Intrim commit
+* [33m4761e9d[m Basic CRUD bill operations completed
+* [33mdbe75fc[m Completed CRD basic operations on Bill
+* [33m7707f83[m Bill schema
+* [33m614a290[m Delete transaction functionality completed
+* [33m87fd9fb[m Intrim commit
+* [33m87476ec[m Completed get transaction.Review left
+* [33mef63a37[m Saving transactions along with category-Completed
+* [33m89d3542[m Basic saving of transaction completed.Implementing exception and contraint handling
+* [33mf868925[m Update to status code OK
+* [33m7a8cd0f[m Cretion of user details completed and tested
+* [33m49e1236[m Get user details completed.Create user details in progress
+* [33m326a7b4[m Get mapping for user-profile.TODO exception handling
+[31m|[m * [33m285d20d[m[33m ([m[1;36mHEAD -> [m[1;32mfeature/transactions[m[33m, [m[1;31morigin/feature/transactions[m[33m)[m Delete transaction functionality completed
+[31m|[m * [33m818b31c[m Intrim commit
+[31m|[m * [33mff1698b[m Completed get transaction.Review left
+[31m|[m * [33m4346dd0[m Saving transactions along with category-Completed
+[31m|[m * [33mbff9a88[m Basic saving of transaction completed.Implementing exception and contraint handling
+[31m|[m * [33m0d3439a[m Update to status code OK
+[31m|[m * [33m7c722e4[m Cretion of user details completed and tested
+[31m|[m * [33maafd94e[m Get user details completed.Create user details in progress
+[31m|[m * [33med7efff[m Get mapping for user-profile.TODO exception handling
+[31m|[m[31m/[m  
+[31m|[m * [33m740af7a[m[33m ([m[1;31morigin/feature/bill[m[33m, [m[1;32mfeature/bill[m[33m)[m Bill feature v1 completed
+[31m|[m * [33mdeb56b1[m Basic CRUD bill operations completed
+[31m|[m * [33m83900d9[m Completed CRD basic operations on Bill
+[31m|[m * [33ma4e1cfb[m Bill schema
+[31m|[m * [33mf90fb56[m Delete transaction functionality completed
+[31m|[m * [33m9dc76de[m Intrim commit
+[31m|[m * [33m4ae7749[m Completed get transaction.Review left
+[31m|[m * [33m72cb714[m Saving transactions along with category-Completed
+[31m|[m * [33mf389640[m Basic saving of transaction completed.Implementing exception and contraint handling
+[31m|[m * [33m56e531c[m Update to status code OK
+[31m|[m * [33m9e27c64[m Cretion of user details completed and tested
+[31m|[m * [33m5f61426[m Get user details completed.Create user details in progress
+[31m|[m * [33mf2f4a42[m Get mapping for user-profile.TODO exception handling
+[31m|[m[31m/[m  
+[31m|[m * [33m5be28a2[m[33m ([m[1;31morigin/feature/user-profile[m[33m, [m[1;32mfeature/user-profile[m[33m)[m Update to status code OK
+[31m|[m * [33m12d9e87[m Cretion of user details completed and tested
+[31m|[m * [33m7c8bd72[m Get user details completed.Create user details in progress
+[31m|[m * [33m6c2cd9d[m Get mapping for user-profile.TODO exception handling
+[31m|[m[31m/[m  
+* [33m48a3587[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/feature/auth[m[33m, [m[1;32mmain[m[33m, [m[1;32mfeature/auth[m[33m)[m JWT Secret key gen
+* [33m486241a[m Implemented BCrypt password encoder
+* [33m910c3f2[m Spring sec config in progress
+* [33m67f2c6d[m Basic authentication completed
+* [33md114035[m Added GlobalExceptionHandler.Generic exception. USER exists exception added
+* [33m59b11eb[m Add custom exception handling for authentication DTO validation.
+* [33mcd3ed44[m First commit. Setting of models.User signup (basic)

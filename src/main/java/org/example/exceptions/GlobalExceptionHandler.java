@@ -25,16 +25,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(err, HttpStatus.CONFLICT);
     }
 
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> resourceNotFound(ResourceNotFoundException e){
         ErrorResponse err=new ErrorResponse(404,e.getMessage(),"NOT_FOUND");
         return new ResponseEntity<>(err, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(UserDetailNotFoundException.class)
-    public ResponseEntity<ErrorResponse> userDetailNotFound(UserDetailNotFoundException e){
-        ErrorResponse err=new ErrorResponse(404,e.getMessage(),"NOT_FOUND");
-        return new ResponseEntity<>(err,HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(TransactionNotFoundException.class)
@@ -86,8 +81,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(EmptyResultDataAccessException.class)
-    public ResponseEntity<ErrorResponse> dataNotFoundInDBException(EmptyResultDataAccessException e){
-        ErrorResponse err=new ErrorResponse(404,e.getMessage(),"NOT_FOUND");
+    public ResponseEntity<ErrorResponse> dataNotFoundInDBException(EmptyResultDataAccessException e) {
+        ErrorResponse err = new ErrorResponse(404, e.getMessage(), "NOT_FOUND");
+        return new ResponseEntity<>(err, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UserDetailNotFoundException.class)
+    public ResponseEntity<ErrorResponse> userDetailNotFound(UserDetailNotFoundException e){
+        ErrorResponse err=new ErrorResponse(404,"User details not found","NOT_FOUND");
         return new ResponseEntity<>(err,HttpStatus.NOT_FOUND);
     }
 
