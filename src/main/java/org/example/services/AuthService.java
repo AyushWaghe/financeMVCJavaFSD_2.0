@@ -12,6 +12,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+
 @Service
 @RequiredArgsConstructor //This handles all the constructer initializations. Like below jwt service for final variables
 public class AuthService {  //Login

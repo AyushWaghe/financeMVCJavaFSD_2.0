@@ -18,7 +18,7 @@ public class Category {
     @SequenceGenerator(name="cat_seq_gen",sequenceName = "cat_seq",allocationSize = 30)
     private Integer Id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_id",referencedColumnName = "user_id")
     private User user;
 

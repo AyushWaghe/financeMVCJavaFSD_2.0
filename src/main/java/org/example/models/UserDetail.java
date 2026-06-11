@@ -25,7 +25,7 @@ public class UserDetail {
     private String username;
 
     @Column(name="address")
-    private String userAddr;
+    private String address;
 
     @Column(name="total_bal")
     private BigDecimal totalBal;
@@ -38,7 +38,4 @@ public class UserDetail {
 
     @Column(name="savings")
     private Integer savings;
-
-
-
 }

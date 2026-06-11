@@ -1,16 +1,19 @@
 package org.example.models;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.example.enums.SpendingType;
 import org.example.enums.TransactionType;
+import org.hibernate.annotations.Check;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@AllArgsConstructor
+@Getter
+@Builder
 @Entity
 @Data
 @NoArgsConstructor
@@ -24,6 +27,7 @@ public class Transaction {
     private Integer Id;
 
     @ManyToOne
+    @NonNull
     @JoinColumn(name="user_id",referencedColumnName = "user_id")
     private User user;
 
@@ -33,22 +37,28 @@ public class Transaction {
     @Column(name="description")
     private String description;
 
-    @Column(name="amount")
+    @Column(name="amount",precision = 8,scale = 2,nullable = false)
+    @NonNull
+    @Check(constraints = "amount > 0")
     private BigDecimal amount;
 
     @ManyToOne
+//    @NonNull
     @JoinColumn(name="category_id",referencedColumnName ="category_id")
     private Category category;
 
     @Column(name = "transaction_date")
+    @NonNull
     private LocalDateTime transactionDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name="transaction_type")
+    @NonNull
     private TransactionType type;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "spending_type")
+    @NonNull
     private SpendingType spendingType;
 
     @CreationTimestamp
