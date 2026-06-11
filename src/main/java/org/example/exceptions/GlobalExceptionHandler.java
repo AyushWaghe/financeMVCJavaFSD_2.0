@@ -70,7 +70,6 @@ public class GlobalExceptionHandler {
             message = "Invalid bill spending type. Allowed values: PENDING,OVERDUE,PAID";
         }
 
-
         ErrorResponse err=new ErrorResponse(409,message,"CONFLICT");
         return new ResponseEntity<>(err, HttpStatus.BAD_REQUEST);
     }
