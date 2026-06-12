@@ -12,10 +12,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
-@Getter
 @Builder
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "transactions")
 public class Transaction {

@@ -1,1 +1,31 @@
 1)Edge case handling in Transactions. Like min and max length edge cases
+
+
+```json
+[
+  {
+    "userId": 1,
+    "title": "Electricity Bill",
+    "amount": 2450.75,
+    "dueDate": "2026-06-12",
+    "billStatus": "PENDING",
+    "billId": 101
+  },
+  {
+    "userId": 1,
+    "title": "Internet Bill",
+    "amount": 999.00,
+    "dueDate": "2026-06-13",
+    "billStatus": "PENDING",
+    "billId": 102
+  },
+  {
+    "userId": 1,
+    "title": "Credit Card Payment",
+    "amount": 18500.50,
+    "dueDate": "2026-06-15",
+    "billStatus": "PENDING",
+    "billId": 103
+  }
+]
+```

@@ -5,6 +5,7 @@ import org.example.dao.BillInstanceRepository;
 import org.example.dao.BillRepository;
 import org.example.dao.UserRepository;
 import org.example.dto.*;
+import org.example.event.BillReminderEvent;
 import org.example.exceptions.ResourceNotFoundException;
 import org.example.exceptions.UserDetailNotFoundException;
 import org.example.mapper.BillMapper;
@@ -12,8 +13,10 @@ import org.example.models.Bill;
 import org.example.models.BillInstance;
 import org.example.models.Transaction;
 import org.example.models.User;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -23,6 +26,7 @@ public class BillInstanceService {
     private final BillInstanceRepository billInstanceRepository;
     private final UserRepository userRepository;
     private final BillRepository billRepository;
+    private final KafkaTemplate<String,BillReminderEvent> kafkaTemplate;
 
     public BillInstanceResponse saveBillInstance(BillInstanceRequest billInstanceRequest) {
         User user = userRepository.findById(billInstanceRequest.getUserId())
@@ -80,5 +84,26 @@ public class BillInstanceService {
         existingBillInstance.setBillStatus(billInstanceRequest.getBillStatus());
 
         billInstanceRepository.save(existingBillInstance);
+    }
+
+    public void processDueBills() {
+
+        LocalDate targetDate=LocalDate.now().plusDays(3);
+        List<BillInstance> dueBills=billInstanceRepository.findDueBills(targetDate);
+
+        for (BillInstance bill : dueBills) {
+            BillReminderEvent event = new BillReminderEvent(
+                    bill.getBillInstanceId(),
+                    bill.getTitle(),
+                    bill.getAmount(),
+                    bill.getDueDate(),
+                    bill.getBillStatus()
+            );
+
+            System.out.println(dueBills);
+
+            kafkaTemplate.send("bill-reminder-topic", bill.getUser().getUserId().toString(), event);
+        }
+
     }
 }

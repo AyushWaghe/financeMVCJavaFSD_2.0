@@ -15,10 +15,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
-@Getter
 @Builder
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @Table(name = "bills")
 @Check(constraints = "amount > 0")

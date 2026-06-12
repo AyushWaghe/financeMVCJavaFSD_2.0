@@ -9,6 +9,7 @@ import org.example.exceptions.ResourceNotFoundException;
 import org.example.exceptions.UserDetailNotFoundException;
 import org.example.mapper.BillMapper;
 import org.example.models.Bill;
+import org.example.models.BillInstance;
 import org.example.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -71,4 +72,6 @@ public class BillService {
         bill.setLatestDueDate(billRequest.getDueDate());
         return BillMapper.toBillResponse(billRepository.save(bill));
     }
+
+
 }

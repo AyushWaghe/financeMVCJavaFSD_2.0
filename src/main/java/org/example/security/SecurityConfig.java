@@ -26,9 +26,11 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) //Telling spring not to maintain any sessions and everything is stateless
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll() // allow login & register
-                        .anyRequest().authenticated()
+//                        .requestMatchers("/auth/**").permitAll() // allow login & register
+//                        .anyRequest().authenticated()
+                                .anyRequest().permitAll()
                 )
+
 
                 .formLogin(form -> form.disable()) // ❌ disable default login page
                 .httpBasic(basic -> basic.disable()); // optional (disable basic auth)

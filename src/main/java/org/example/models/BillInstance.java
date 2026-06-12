@@ -11,9 +11,9 @@ import java.time.LocalDate;
 
 @Entity
 @NoArgsConstructor
-@Data
 @Builder
 @Getter
+@Setter
 @AllArgsConstructor
 @Table(name = "bill_instances")
 public class BillInstance {
