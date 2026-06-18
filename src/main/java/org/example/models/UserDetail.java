@@ -34,6 +34,7 @@ public class UserDetail {
     private BigDecimal totalBal;
 
     @Column(name="needs")
+
     private Integer needs;
 
     @Column(name="wants")
@@ -41,4 +42,7 @@ public class UserDetail {
 
     @Column(name="savings")
     private Integer savings;
+
+    @Column(name = "notification_subscribed")
+    private boolean notificationSubscribed=true;
 }

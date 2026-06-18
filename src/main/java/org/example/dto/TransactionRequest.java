@@ -35,8 +35,9 @@ public class TransactionRequest {
     private LocalDateTime transactionDate;
 
     @NotNull(message = "Transaction type cannot be null")
-    private TransactionType type;
+    private TransactionType type; //income,expense
 
     @NotNull(message = "Transaction spending type cannot be null")
-    private SpendingType spendingType;
+    private SpendingType spendingType; //wants,needs,savings
+
 }

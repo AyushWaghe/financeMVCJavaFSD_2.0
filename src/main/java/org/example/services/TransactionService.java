@@ -1,6 +1,9 @@
 package org.example.services;
 
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.example.dao.CategoryRepository;
+import org.example.dao.MonthlyTransactionSummaryRepository;
 import org.example.dao.TransactionRepository;
 import org.example.dao.UserRepository;
 import org.example.dto.TransactionRequest;
@@ -11,33 +14,23 @@ import org.example.exceptions.UserDetailNotFoundException;
 import org.example.models.Category;
 import org.example.models.Transaction;
 import org.example.models.User;
-import org.example.utils.CategoryUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class TransactionService {
 
-    @Autowired
-    TransactionRepository transactionRepository;
 
-    @Autowired
-    UserRepository userRepository;
+    private final TransactionRepository transactionRepository;
+    private final UserRepository userRepository;
+    private final CategoryService categoryService;
+    private final MonthlyTransactionSummaryService monthlyTransactionSummaryService;
 
-    @Autowired
-    CategoryRepository categoryRepository;
-
-    @Autowired
-    CategoryService categoryService;
-
+    @Transactional
     public Transaction saveTransaction(TransactionRequest transactionRequest){
 
         User user = userRepository.findById(transactionRequest.getUserId())
@@ -56,7 +49,12 @@ public class TransactionService {
                 .spendingType(transactionRequest.getSpendingType())
                 .build();
 
-        return transactionRepository.save(transaction);
+        Transaction savedTransaction=transactionRepository.save(transaction);
+
+        monthlyTransactionSummaryService.updateMonthlySummaryOnTransactionCreate(savedTransaction);
+
+        return savedTransaction;
+
     }
 
     public List<TransactionResponse> getTransactions(Integer userId, LocalDate startDate,LocalDate endDate) {
@@ -113,7 +111,9 @@ public class TransactionService {
         transaction.setType(transactionRequest.getType());
         transaction.setSpendingType(transactionRequest.getSpendingType());
 
-        transactionRepository.save(transaction);
+        Transaction updatedTransaction=transactionRepository.save(transaction);
+
+        monthlyTransactionSummaryService.updateMonthlySummaryOnTransactionUpdate(transaction,updatedTransaction);
     }
 
     public void deleteTransaction(Integer tId) {
@@ -122,5 +122,7 @@ public class TransactionService {
         if(rows==0){
             throw new ResourceNotFoundException("Transaction with id "+tId+" not found");
         }
+
+//        monthlyTransactionSummaryService.updateMonthlySummaryOnTransactionDelete();
     }
 }
