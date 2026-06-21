@@ -96,7 +96,7 @@ public class TransactionService {
 
     public void updateTransaction(TransactionRequest transactionRequest, Integer id) {
         Transaction transaction=transactionRepository.findById(id).orElseThrow(()->new TransactionNotFoundException("User with id "+transactionRequest.getUserId()+" not found"));
-
+        Transaction oldTransaction=new Transaction(transaction);
         if(!transaction.getUser().getUserId().equals(transactionRequest.getUserId())){
             throw new IllegalArgumentException("User id from transaction "+transaction.getUser().getUserId()+" and transaction request "+transactionRequest.getUserId()+ " did not match");
         }
@@ -113,16 +113,20 @@ public class TransactionService {
 
         Transaction updatedTransaction=transactionRepository.save(transaction);
 
-        monthlyTransactionSummaryService.updateMonthlySummaryOnTransactionUpdate(transaction,updatedTransaction);
+        monthlyTransactionSummaryService.updateMonthlySummaryOnTransactionUpdate(oldTransaction,updatedTransaction);
     }
 
+//    @Transactional
     public void deleteTransaction(Integer tId) {
-        int rows=transactionRepository.deleteTransactionById(tId);
 
-        if(rows==0){
-            throw new ResourceNotFoundException("Transaction with id "+tId+" not found");
-        }
+        Transaction transaction = transactionRepository.findById(tId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Transaction with id " + tId + " not found"));
 
-//        monthlyTransactionSummaryService.updateMonthlySummaryOnTransactionDelete();
+        monthlyTransactionSummaryService
+                .updateMonthlySummaryOnTransactionDelete(transaction);
+
+        transactionRepository.delete(transaction);
     }
 }

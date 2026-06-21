@@ -12,8 +12,8 @@ public class BillReminderScheduler {
 
     private final BillInstanceService billInstanceService;
 
-//    @Scheduled(cron = "0 0 0 * * *")
-    @Scheduled(fixedRate = 5000) // every 5000 ms = 5 seconds
+    @Scheduled(cron = "0 0 0 * * *")
+//    @Scheduled(fixedRate = 5000) // every 5000 ms = 5 seconds
     public void processDueBills(){
         System.out.println("running shceduler");
         billInstanceService.processDueBills();

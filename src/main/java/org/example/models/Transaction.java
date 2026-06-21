@@ -70,4 +70,17 @@ public class Transaction {
     @Column(name="updated_at")
     private LocalDateTime updatedAt;
 
+    //Copy constructer
+    public Transaction(Transaction other) {
+        this.Id = other.Id;
+        this.title = other.title;
+        this.description = other.description;
+        this.amount = other.amount;
+        this.category = other.category;
+        this.transactionDate = other.transactionDate;
+        this.type = other.type;
+        this.spendingType = other.spendingType;
+        this.user = other.user;
+    }
+
 }

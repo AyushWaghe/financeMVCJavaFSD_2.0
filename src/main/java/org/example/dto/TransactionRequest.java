@@ -37,7 +37,7 @@ public class TransactionRequest {
     @NotNull(message = "Transaction type cannot be null")
     private TransactionType type; //income,expense
 
-    @NotNull(message = "Transaction spending type cannot be null")
+//    @NotNull(message = "Transaction spending type cannot be null")
     private SpendingType spendingType; //wants,needs,savings
 
 }

@@ -19,4 +19,13 @@ public class KafkaConfig {
                 .replicas(3)
                 .build();
     }
+
+    @Bean
+    public NewTopic monthlySummaryUpdatedTopic() {
+        return TopicBuilder
+                .name("monthly-summary-updated-topic")
+                .partitions(3)
+                .replicas(3)
+                .build();
+    }
 }

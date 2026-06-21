@@ -4,17 +4,23 @@ import lombok.RequiredArgsConstructor;
 import org.example.dao.MonthlyTransactionSummaryRepository;
 import org.example.enums.SpendingType;
 import org.example.enums.TransactionType;
+import org.example.event.BillReminderEvent;
+import org.example.event.MonthlySummaryUpdatedEvent;
 import org.example.models.MonthlyTransactionSummary;
 import org.example.models.Transaction;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
 public class MonthlyTransactionSummaryService {
 
     private final MonthlyTransactionSummaryRepository monthlyTransactionSummaryRepository;
+    private final KafkaTemplate<String, MonthlySummaryUpdatedEvent> kafkaTemplate;
+
 
     public void updateMonthlySummaryOnTransactionCreate(Transaction transaction) {
 
@@ -37,6 +43,15 @@ public class MonthlyTransactionSummaryService {
 
         updateMonthlySummaryDelta(transaction,month,year,amount,userId);
 
+        if(year==LocalDate.now().getYear() && month==LocalDate.now().getMonthValue()){
+            MonthlySummaryUpdatedEvent monthlySummaryUpdatedEvent=new MonthlySummaryUpdatedEvent(userId);
+            kafkaTemplate.send(
+                    "monthly-summary-updated-topic",
+                    userId.toString(),
+                    monthlySummaryUpdatedEvent
+            );
+        }
+
     }
 
     public void updateMonthlySummaryOnTransactionUpdate(Transaction oldTransaction,Transaction newTransaction) {
@@ -48,6 +63,7 @@ public class MonthlyTransactionSummaryService {
         Integer userId = oldTransaction.getUser().getUserId();
         BigDecimal oldAmount = oldTransaction.getAmount().negate();
         BigDecimal newAmount = newTransaction.getAmount();
+        System.out.println("Old year is"+oldYear);
 
         if(newYear!=oldYear || newMonth!=oldMonth){ //Transaction date updated hence monthly entries to be updated
 
@@ -73,12 +89,34 @@ public class MonthlyTransactionSummaryService {
 
             updateMonthlySummaryDelta(newTransaction,newMonth,newYear,newAmount,userId);
 
+            //Kafka event publish
+            if((oldYear==LocalDate.now().getYear() && oldMonth==LocalDate.now().getMonthValue())
+                    || (newYear==LocalDate.now().getYear() && newMonth==LocalDate.now().getMonthValue())){
+                MonthlySummaryUpdatedEvent monthlySummaryUpdatedEvent=new MonthlySummaryUpdatedEvent(userId);
+                kafkaTemplate.send(
+                        "monthly-summary-updated-topic",
+                        userId.toString(),
+                        monthlySummaryUpdatedEvent
+                );
+            }
+
         }else{
             if(oldTransaction.getType() != newTransaction.getType() || oldTransaction.getSpendingType() != newTransaction.getSpendingType()
                     || oldTransaction.getAmount()
                     .compareTo(newTransaction.getAmount()) != 0){
                 updateMonthlySummaryDelta(oldTransaction,oldMonth,oldYear,oldAmount,userId);
                 updateMonthlySummaryDelta(newTransaction,newMonth,newYear,newAmount,userId);
+
+                //Kafka even publish
+                if((oldYear==LocalDate.now().getYear() && oldMonth==LocalDate.now().getMonthValue())
+                        || (newYear==LocalDate.now().getYear() && newMonth==LocalDate.now().getMonthValue())){
+                    MonthlySummaryUpdatedEvent monthlySummaryUpdatedEvent=new MonthlySummaryUpdatedEvent(userId);
+                    kafkaTemplate.send(
+                            "monthly-summary-updated-topic",
+                            userId.toString(),
+                            monthlySummaryUpdatedEvent
+                    );
+                }
             }
         }
     }
@@ -90,6 +128,16 @@ public class MonthlyTransactionSummaryService {
         BigDecimal amount = transaction.getAmount().negate();
 
         updateMonthlySummaryDelta(transaction,month,year,amount,userId);
+
+        //Kafka event publish
+        if(year==LocalDate.now().getYear() && month==LocalDate.now().getMonthValue()){
+            MonthlySummaryUpdatedEvent monthlySummaryUpdatedEvent=new MonthlySummaryUpdatedEvent(userId);
+            kafkaTemplate.send(
+                    "monthly-summary-updated-topic",
+                    userId.toString(),
+                    monthlySummaryUpdatedEvent
+            );
+        }
 
     }
 
@@ -109,9 +157,13 @@ public class MonthlyTransactionSummaryService {
                         userId, year, month, changeAmount
                 );
 
-                case SAVINGS -> monthlyTransactionSummaryRepository.updateSavingsExpense(
-                        userId, year, month, changeAmount
-                );
+                case SAVINGS ->{
+                    System.out.println("When in savings");
+                    monthlyTransactionSummaryRepository.updateSavingsExpense(
+                            userId, year, month, changeAmount
+                    );
+                    System.out.println("Reached here");
+                }
             }
         }
     }

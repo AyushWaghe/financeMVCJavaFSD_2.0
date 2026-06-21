@@ -1,5 +1,6 @@
 package org.example.dao;
 
+import jakarta.transaction.Transactional;
 import org.example.models.MonthlyTransactionSummary;
 import org.example.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,6 +21,7 @@ public interface MonthlyTransactionSummaryRepository extends JpaRepository<Month
     );
 
     @Modifying
+    @Transactional
     @Query("""
 UPDATE MonthlyTransactionSummary m
 SET m.totalIncome = m.totalIncome + :amount
@@ -35,6 +37,7 @@ WHERE m.user.userId = :userId
     );
 
     @Modifying
+    @Transactional
     @Query("""
 UPDATE MonthlyTransactionSummary m
 SET m.totalExpense = m.totalExpense + :amount,
@@ -51,6 +54,7 @@ WHERE m.user.userId = :userId
     );
 
     @Modifying
+    @Transactional
     @Query("""
 UPDATE MonthlyTransactionSummary m
 SET m.totalExpense = m.totalExpense + :amount,
@@ -67,6 +71,7 @@ WHERE m.user.userId = :userId
     );
 
     @Modifying
+    @Transactional
     @Query("""
 UPDATE MonthlyTransactionSummary m
 SET m.totalExpense = m.totalExpense + :amount,
