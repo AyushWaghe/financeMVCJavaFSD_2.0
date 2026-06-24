@@ -31,7 +31,7 @@ public class MonthlyTransactionSummaryService {
 
         MonthlyTransactionSummary summary =
                 monthlyTransactionSummaryRepository
-                        .findByUserAndYearAndMonth(transaction.getUser(), year, month)
+                        .findByUserUserIdAndYearAndMonth(transaction.getUser().getUserId(), year, month)
                         .orElseGet(() -> {
                             MonthlyTransactionSummary mts = new MonthlyTransactionSummary();
                             mts.setUser(transaction.getUser());
@@ -68,8 +68,8 @@ public class MonthlyTransactionSummaryService {
         if(newYear!=oldYear || newMonth!=oldMonth){ //Transaction date updated hence monthly entries to be updated
 
             monthlyTransactionSummaryRepository //First check if the new entry for monthly summary table exists
-                    .findByUserAndYearAndMonth(
-                            newTransaction.getUser(),
+                    .findByUserUserIdAndYearAndMonth(
+                            newTransaction.getUser().getUserId(),
                             newYear,
                             newMonth
                     )

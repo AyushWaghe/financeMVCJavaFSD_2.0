@@ -14,8 +14,8 @@ import java.util.Optional;
 
 @Repository
 public interface MonthlyTransactionSummaryRepository extends JpaRepository<MonthlyTransactionSummary,Integer> {
-    Optional<MonthlyTransactionSummary> findByUserAndYearAndMonth(
-            User user,
+    Optional<MonthlyTransactionSummary> findByUserUserIdAndYearAndMonth(
+            Integer userId,
             Integer year,
             Integer month
     );

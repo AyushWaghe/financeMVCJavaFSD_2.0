@@ -34,7 +34,6 @@ public class UserDetail {
     private BigDecimal totalBal;
 
     @Column(name="needs")
-
     private Integer needs;
 
     @Column(name="wants")

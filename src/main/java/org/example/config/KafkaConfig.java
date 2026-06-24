@@ -28,4 +28,13 @@ public class KafkaConfig {
                 .replicas(3)
                 .build();
     }
+
+    @Bean
+    public NewTopic alertNotificationTopic() {
+        return TopicBuilder
+                .name("alert-notification-topic")
+                .partitions(3)
+                .replicas(3)
+                .build();
+    }
 }
