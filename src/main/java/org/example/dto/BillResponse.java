@@ -27,6 +27,4 @@ public class BillResponse {
 
     @NotNull
     private BillRecurrence billRecurrence;
-
-    private BillStatus billStatus;
 }

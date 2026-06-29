@@ -17,7 +17,7 @@ public interface TransactionRepository extends JpaRepository<Transaction,Integer
     @Query("""
             SELECT t FROM Transaction t JOIN FETCH t.category WHERE t.user.userId = :userId AND t.transactionDate BETWEEN :startDate AND :endDate
             """)
-    List<Transaction> findByUser_UserIdAndTransactionDateBetween(Integer userId, LocalDateTime startDate, LocalDateTime endDate);
+    List<Transaction> findByUser_UserIdAndTransactionDateBetween(Integer userId, LocalDate startDate, LocalDate endDate);
 
     List<Transaction> findByUser_UserId(Integer userId);
 

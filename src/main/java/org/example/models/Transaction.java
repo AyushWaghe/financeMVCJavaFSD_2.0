@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
@@ -49,7 +50,7 @@ public class Transaction {
 
     @Column(name = "transaction_date")
     @NonNull
-    private LocalDateTime transactionDate;
+    private LocalDate transactionDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name="transaction_type")

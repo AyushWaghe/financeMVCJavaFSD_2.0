@@ -11,12 +11,14 @@ import org.example.enums.SpendingType;
 import org.example.enums.TransactionType;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransactionResponse {
+    private Integer transactionId;
 
     private String title;
 
@@ -26,7 +28,7 @@ public class TransactionResponse {
 
     private String category;
 
-    private LocalDateTime transactionDate;
+    private LocalDate transactionDate;
 
     private TransactionType type;
 

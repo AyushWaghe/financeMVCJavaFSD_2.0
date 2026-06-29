@@ -138,5 +138,7 @@ public class MonthlySummaryUpdatedConsumer {
                 monthlyTransactionSummaryRepository.save(monthlyTransactionSummary);
             }
         }
+
+        System.out.println("kakfa processed");
     }
 }

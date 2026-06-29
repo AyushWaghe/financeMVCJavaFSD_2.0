@@ -1,6 +1,7 @@
 package org.example.services;
 
 import lombok.RequiredArgsConstructor;
+import org.example.dao.UserRepository;
 import org.example.dto.AuthRequest;
 import org.example.dto.AuthResponse;
 import org.example.models.User;
@@ -10,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 
@@ -23,23 +25,34 @@ public class AuthService {  //Login
     @Autowired
     private final JwtService jwtService;
 
+    @Autowired
+    private final UserRepository userRepository;
+
     public AuthResponse loginUser(AuthRequest authRequest) {
         try {
-            Authentication authentication=authenticationManager.authenticate( //This calls load by username internally
+            Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             authRequest.getUseremail(),
                             authRequest.getPassword()
                     )
             );
-            //If in-case the authentication fails then in that case the above authentication will throw error.
 
-            User user=(User) authentication.getPrincipal();
+            org.springframework.security.core.userdetails.User userDetails =
+                    (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
 
-            String token=jwtService.generateAccessToken(user);
+            User user = userRepository.findByUseremail(userDetails.getUsername())
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-            return new AuthResponse(true, user.getUserId(),user.getUseremail(), "Login successful",token);
+            String token = jwtService.generateAccessToken(user);
+
+            return new AuthResponse(
+                    true,
+                    user.getUserId(),
+                    user.getUseremail(),
+                    "Login successful"
+            );
         }catch (BadCredentialsException e){
-            return new AuthResponse(false,null,"","Login Unsuccessful","");
+            return new AuthResponse(false,null,"","Login Unsuccessful");
         }
     }
 }

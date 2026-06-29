@@ -1,8 +1,11 @@
 package org.example.controllers;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.example.dto.AuthRequest;
 import org.example.dto.AuthResponse;
+import org.example.dto.AuthResult;
 import org.example.exceptions.UserExistsException;
 import org.example.models.User;
 import org.example.services.AuthService;
@@ -30,8 +33,19 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<AuthResponse> registerUser(@Valid @RequestBody AuthRequest authRequest){
-        AuthResponse authResponse=  userDetailServiceImpl.registerUser(authRequest);
+    public ResponseEntity<AuthResponse> registerUser(@Valid @RequestBody AuthRequest authRequest,
+                                                    HttpServletResponse response){
+        AuthResult authResult=  userDetailServiceImpl.registerUser(authRequest);
+        AuthResponse authResponse=authResult.authResponse();
+
+        String jwt=authResult.jwt();
+
+        //HTTP Cookie
+        Cookie cookie=new Cookie("jwt",jwt);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(60 * 60); // 1 hour
+        response.addCookie(cookie); //Browser will now store this cookie upon receiving
 
         if(authResponse.isSuccess()){
             return new ResponseEntity<>(authResponse, HttpStatus.CREATED);

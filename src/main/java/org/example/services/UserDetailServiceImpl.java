@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.dao.UserRepository;
 import org.example.dto.AuthRequest;
 import org.example.dto.AuthResponse;
+import org.example.dto.AuthResult;
 import org.example.exceptions.UserExistsException;
 import org.example.models.UserDetail;
 import org.example.security.JwtService;
@@ -34,7 +35,7 @@ public class UserDetailServiceImpl implements UserDetailsService { //Signup
     private final JwtService jwtService;
 
 
-    public AuthResponse registerUser(AuthRequest authRequest) {
+    public AuthResult registerUser(AuthRequest authRequest) {
 
         String useremail= authRequest.getUseremail();
 
@@ -48,13 +49,13 @@ public class UserDetailServiceImpl implements UserDetailsService { //Signup
         userDetail.setUser(user);
         org.example.models.User savedUser=userRepository.save(user);
         String token=jwtService.generateAccessToken(user);
+        AuthResponse authResponse=new AuthResponse(true,savedUser.getUserId(),useremail,"User registered successfully");
 
-        return new AuthResponse(true,savedUser.getUserId(),useremail,"User saved successfully",token);
-
+        return new AuthResult(authResponse,token);
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException { //THIS METHOD IS CALLED DURING LOGIN
         Optional<org.example.models.User> user=userRepository.findByUseremail(username);
         if (!user.isEmpty()){
             UserDetails userDetails=org.springframework.security.core.userdetails.User.builder()

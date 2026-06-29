@@ -10,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -32,7 +33,7 @@ public class TransactionRequest {
 
     @NotNull(message = "Transaction date cannot be blank")
     @PastOrPresent(message = "Transaction date cannot be a future date")
-    private LocalDateTime transactionDate;
+    private LocalDate transactionDate;
 
     @NotNull(message = "Transaction type cannot be null")
     private TransactionType type; //income,expense

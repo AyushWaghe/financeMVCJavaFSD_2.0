@@ -4,7 +4,7 @@ public enum BillRecurrence {
     DAILY,
     WEEKLY,
     MONTHLY,
-    QUATERLY,
+    QUARTERLY,
     HALF_YEARLY,
     YEARLY,
     NONE

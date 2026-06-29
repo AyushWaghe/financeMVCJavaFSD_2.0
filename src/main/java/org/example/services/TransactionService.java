@@ -66,20 +66,17 @@ public class TransactionService {
         }
 
         LocalDate today=LocalDate.now();
-        LocalDateTime startDateTime,endDateTime;
-        if(startDate==null){
-            startDateTime=today.withDayOfMonth(1).atStartOfDay();
-        }else{
-            startDateTime=startDate.atStartOfDay();
-        }
-        if(endDate==null){
-            endDateTime=today.atTime(23,59,59);
-        }else {
-            endDateTime=endDate.atTime(23,59,59);
+        if (startDate == null) {
+            startDate = today.withDayOfMonth(1);
         }
 
-        List<Transaction> transactions=transactionRepository.findByUser_UserIdAndTransactionDateBetween(user.getUserId(),startDateTime,endDateTime);
+        if (endDate == null) {
+            endDate = today;
+        }
+
+        List<Transaction> transactions=transactionRepository.findByUser_UserIdAndTransactionDateBetween(user.getUserId(),startDate,endDate);
         List<TransactionResponse> transactionList=transactions.stream().map(t-> new TransactionResponse(
+                t.getId(),
                 t.getTitle(),
                 t.getDescription(),
                 t.getAmount(),

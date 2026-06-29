@@ -1,10 +1,12 @@
 package org.example.services;
 
 import lombok.RequiredArgsConstructor;
+import org.example.dao.BillInstanceRepository;
 import org.example.dao.BillRepository;
 import org.example.dao.UserRepository;
 import org.example.dto.BillRequest;
 import org.example.dto.BillResponse;
+import org.example.enums.BillStatus;
 import org.example.exceptions.ResourceNotFoundException;
 import org.example.exceptions.UserDetailNotFoundException;
 import org.example.mapper.BillMapper;
@@ -22,14 +24,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class BillService {
 
-//    @Autowired
-//    BillRepository billRepository;
-//
-//    @Autowired
-//    UserRepository userRepository;
-
     private final BillRepository billRepository;
     private final UserRepository userRepository;
+    private final BillInstanceRepository billInstanceRepository;
 
     public BillResponse saveBill(BillRequest billRequest) {
         User user=userRepository.findById(billRequest.getUserId())
@@ -37,6 +34,17 @@ public class BillService {
 
         Bill bill= BillMapper.toEntity(billRequest,user);
         Bill savedBill=billRepository.save(bill);
+
+        // Create the first bill instance
+        BillInstance billInstance = new BillInstance();
+        billInstance.setBill(savedBill);
+        billInstance.setUser(user);
+        billInstance.setTitle(savedBill.getTitle());
+        billInstance.setAmount(savedBill.getAmount());
+        billInstance.setDueDate(billRequest.getDueDate());
+        billInstance.setBillStatus(BillStatus.PENDING);
+
+        billInstanceRepository.save(billInstance);
 
         return BillMapper.toBillResponse(savedBill);
     }
