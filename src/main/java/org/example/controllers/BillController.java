@@ -33,7 +33,7 @@ public class BillController {
         return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
     }
 
-    @GetMapping("/bill/user/{userId}")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<APIResponse<List<BillResponse>>> getBills(@PathVariable("userId") Integer userId){
         List<BillResponse> billResponses=billService.getUserBills(userId);
         APIResponse<List<BillResponse>> apiResponse=new APIResponse();
@@ -54,6 +54,7 @@ public class BillController {
 
     @PutMapping("/{billId}")
     public ResponseEntity<APIResponse<BillResponse>> updateBill(@Valid @RequestBody BillRequest billRequest,@PathVariable("billId") Integer billId){
+        System.out.println(billId);
         BillResponse billResponse=billService.updateBill(billRequest,billId);
         APIResponse<BillResponse> apiResponse=new APIResponse<>();
         apiResponse.setMessage("Bill updated successfully");

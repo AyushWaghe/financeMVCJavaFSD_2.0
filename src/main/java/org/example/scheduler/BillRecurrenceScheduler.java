@@ -36,8 +36,6 @@ public class BillRecurrenceScheduler {
             );
 
             BillInstance billInstance = new BillInstance();
-
-            billInstance.setBill(bill);
             billInstance.setUser(bill.getUser());
             billInstance.setTitle(bill.getTitle());
             billInstance.setAmount(bill.getAmount());

@@ -1,6 +1,8 @@
 package org.example.dao;
 
 import jakarta.transaction.Transactional;
+import org.example.enums.BillStatus;
+import org.example.models.Bill;
 import org.example.models.BillInstance;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -28,6 +30,23 @@ public interface BillInstanceRepository extends JpaRepository<BillInstance,Integ
     AND b.billStatus <> 'PAID'
 """)
     List<BillInstance> findDueBills(@Param("targetDate") LocalDate targetDate);
+
+    List<BillInstance> findByUserUserIdAndDueDateGreaterThanEqualAndBillStatus(
+            Integer userId,
+            LocalDate dueDate,
+            BillStatus billStatus
+    );
+
+    List<BillInstance> findByUserUserIdAndDueDateLessThanAndBillStatus(
+            Integer userId,
+            LocalDate dueDate,
+            BillStatus billStatus
+    );
+
+    List<BillInstance> findByUserUserIdAndBillStatus(
+            Integer userId,
+            BillStatus billStatus
+    );
 
 
 }

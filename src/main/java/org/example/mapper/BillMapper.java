@@ -27,7 +27,6 @@ public class BillMapper {
                 .user(user)
                 .billStatus(billInstanceRequest.getBillStatus())
                 .dueDate(billInstanceRequest.getDueDate())
-                .bill(bill)
                 .build();
     }
 
@@ -37,6 +36,7 @@ public class BillMapper {
                 .amount(bill.getAmount())
                 .dueDate(bill.getLatestDueDate())
                 .billRecurrence(bill.getBillRecurrence())
+                .billId(bill.getBillId())
                 .build();
 
     }

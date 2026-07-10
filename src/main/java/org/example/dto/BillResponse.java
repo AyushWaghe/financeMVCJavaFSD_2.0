@@ -17,6 +17,9 @@ import java.time.LocalDate;
 public class BillResponse {
 
     @NotBlank
+    private Integer billId;
+
+    @NotBlank
     private String title;
 
     @NotNull

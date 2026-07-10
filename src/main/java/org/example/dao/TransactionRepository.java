@@ -5,6 +5,7 @@ import org.example.models.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -29,4 +30,18 @@ public interface TransactionRepository extends JpaRepository<Transaction,Integer
      */
     @Query("DELETE FROM Transaction t WHERE t.id= :id")
     int deleteTransactionById(Integer id);
+
+    @Query("""
+    SELECT t
+    FROM Transaction t
+    WHERE t.user.userId = :userId
+      AND MONTH(t.transactionDate) = :month
+      AND YEAR(t.transactionDate) = :year
+    ORDER BY t.transactionDate DESC
+""")
+    List<Transaction> getTransactionsByUserMonthAndYear(
+            @Param("userId") Integer userId,
+            @Param("month") Integer month,
+            @Param("year") Integer year
+    );
 }

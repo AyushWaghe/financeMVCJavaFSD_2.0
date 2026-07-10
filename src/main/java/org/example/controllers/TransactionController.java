@@ -42,6 +42,16 @@ public class TransactionController {
         return new ResponseEntity<>(apiResponse,HttpStatus.OK);
     }
 
+    @GetMapping("/monthly")
+    public ResponseEntity<APIResponse<List<TransactionResponse>>> getTransactionsMonthly(@RequestParam Integer userId,Integer month,Integer year){
+        List<TransactionResponse> transactionResponses=transactionService.getTransactionsMonthly(userId,month,year);
+        APIResponse<List<TransactionResponse>> apiResponse=new APIResponse<>();
+        apiResponse.setData(transactionResponses);
+        apiResponse.setSuccess(true);
+        apiResponse.setMessage("Transactions fetched successfully");
+        return new ResponseEntity<>(apiResponse,HttpStatus.OK);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<APIResponse<Void>> updateTransaction(@Valid @RequestBody TransactionRequest transactionRequest,@PathVariable("id") Integer id){
         transactionService.updateTransaction(transactionRequest,id);

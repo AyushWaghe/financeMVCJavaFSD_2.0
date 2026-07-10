@@ -34,10 +34,8 @@ public class BillService {
 
         Bill bill= BillMapper.toEntity(billRequest,user);
         Bill savedBill=billRepository.save(bill);
-
         // Create the first bill instance
         BillInstance billInstance = new BillInstance();
-        billInstance.setBill(savedBill);
         billInstance.setUser(user);
         billInstance.setTitle(savedBill.getTitle());
         billInstance.setAmount(savedBill.getAmount());
@@ -78,6 +76,18 @@ public class BillService {
         bill.setAmount(billRequest.getAmount());
         bill.setTitle(billRequest.getTitle());
         bill.setLatestDueDate(billRequest.getDueDate());
+
+        // Create the updated bill instance
+        BillInstance billInstance = new BillInstance();
+        billInstance.setUser(bill.getUser());
+        billInstance.setTitle(bill.getTitle());
+        billInstance.setAmount(bill.getAmount());
+        billInstance.setDueDate(billRequest.getDueDate());
+        billInstance.setBillStatus(BillStatus.PENDING);
+
+        billInstanceRepository.save(billInstance);
+
+
         return BillMapper.toBillResponse(billRepository.save(bill));
     }
 

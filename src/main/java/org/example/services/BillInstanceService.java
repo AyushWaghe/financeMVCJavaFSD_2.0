@@ -5,6 +5,7 @@ import org.example.dao.BillInstanceRepository;
 import org.example.dao.BillRepository;
 import org.example.dao.UserRepository;
 import org.example.dto.*;
+import org.example.enums.BillStatus;
 import org.example.event.BillReminderEvent;
 import org.example.exceptions.ResourceNotFoundException;
 import org.example.exceptions.UserDetailNotFoundException;
@@ -43,18 +44,48 @@ public class BillInstanceService {
         return BillMapper.toBillInstanceResponse(savedBill);
     }
 
-    public List<BillInstanceResponse> getBillInsances(Integer userId) {
+    public List<BillInstanceResponse> getUpcomingBillInsances(Integer userId) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserDetailNotFoundException("User with id " + userId + " not found"));
 
-        List<BillInstance> billInstances=billInstanceRepository.findByUser_UserId(userId);
+        List<BillInstance> billInstances=billInstanceRepository.findByUserUserIdAndDueDateGreaterThanEqualAndBillStatus(userId,LocalDate.now(), BillStatus.PENDING);
 
         return billInstances.stream().map(b->new BillInstanceResponse(
+                b.getBillInstanceId(),
                 b.getTitle(),
                 b.getAmount(),
-                b.getDueDate(),
-                        b.getBillStatus()
+                b.getDueDate(), b.getBillStatus()
         )
+        ).toList();
+    }
+
+    public List<BillInstanceResponse> getOverDueBillInsances(Integer userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new UserDetailNotFoundException("User with id " + userId + " not found"));
+
+        List<BillInstance> billInstances=billInstanceRepository.findByUserUserIdAndDueDateLessThanAndBillStatus(userId,LocalDate.now(), BillStatus.PENDING);
+
+        return billInstances.stream().map(b->new BillInstanceResponse(
+                        b.getBillInstanceId(),
+                        b.getTitle(),
+                        b.getAmount(),
+                        b.getDueDate(), b.getBillStatus()
+                )
+        ).toList();
+    }
+
+    public List<BillInstanceResponse> getBillInstancesByStatus(Integer userId,BillStatus status) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new UserDetailNotFoundException("User with id " + userId + " not found"));
+
+        List<BillInstance> billInstances=billInstanceRepository.findByUserUserIdAndBillStatus(userId, status);
+
+        return billInstances.stream().map(b->new BillInstanceResponse(
+                        b.getBillInstanceId(),
+                        b.getTitle(),
+                        b.getAmount(),
+                        b.getDueDate(), b.getBillStatus()
+                )
         ).toList();
     }
 
@@ -82,6 +113,18 @@ public class BillInstanceService {
         existingBillInstance.setAmount(billInstanceRequest.getAmount());
         existingBillInstance.setDueDate(billInstanceRequest.getDueDate());
         existingBillInstance.setBillStatus(billInstanceRequest.getBillStatus());
+
+        billInstanceRepository.save(existingBillInstance);
+    }
+
+    public void updateBillInstanceStatus(BillInstanceStatusRequest billInstanceStatusRequest) {
+
+        BillInstance existingBillInstance = billInstanceRepository.findById(billInstanceStatusRequest.getBillInstanceId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Bill instance with id " + billInstanceStatusRequest.getBillInstanceId() + " not found"
+                ));
+
+        existingBillInstance.setBillStatus(billInstanceStatusRequest.getBillStatus());
 
         billInstanceRepository.save(existingBillInstance);
     }

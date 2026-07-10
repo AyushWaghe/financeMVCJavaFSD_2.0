@@ -91,6 +91,27 @@ public class TransactionService {
 
     }
 
+    public List<TransactionResponse> getTransactionsMonthly(Integer userId, Integer month,Integer year) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserDetailNotFoundException("User with id "+userId+" not found"));
+
+        List<Transaction> transactions=transactionRepository.getTransactionsByUserMonthAndYear(user.getUserId(),month,year);
+        List<TransactionResponse> transactionList=transactions.stream().map(t-> new TransactionResponse(
+                        t.getId(),
+                        t.getTitle(),
+                        t.getDescription(),
+                        t.getAmount(),
+                        t.getCategory().getTitle(),
+                        t.getTransactionDate(),
+                        t.getType(),
+                        t.getSpendingType()
+                )
+        ).toList();
+
+        return transactionList;
+
+    }
+
     public void updateTransaction(TransactionRequest transactionRequest, Integer id) {
         Transaction transaction=transactionRepository.findById(id).orElseThrow(()->new TransactionNotFoundException("User with id "+transactionRequest.getUserId()+" not found"));
         Transaction oldTransaction=new Transaction(transaction);
