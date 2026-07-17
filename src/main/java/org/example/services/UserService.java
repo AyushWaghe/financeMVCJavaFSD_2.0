@@ -31,16 +31,16 @@ public class UserService {
         return userDetail.get();
     }
 
-    public UserDetail saveUserDetails(UserDetailRequest userDetailRequest) {
-        User user=userRepository.getReferenceById(userDetailRequest.getId());
-        UserDetail userDetail=userDetailsRepository.findById(userDetailRequest.getId()).orElseThrow(()-> new UserDetailNotFoundException("User details not found"));
+    public UserDetail saveUserDetails(UserDetailRequest userDetailRequest,Integer userId) {
+        User user=userRepository.getReferenceById(userId);
+        UserDetail userDetail=userDetailsRepository.findById(userId).orElseThrow(()-> new UserDetailNotFoundException("User details not found"));
         userDetail.setUser(user);
         userDetail.setAddress(userDetailRequest.getAddress());
         userDetail.setUsername(userDetailRequest.getName());
         userDetail.setSavings(userDetailRequest.getSavings());
-        userDetail.setTotalBal(userDetailRequest.getTotal_bal());
         userDetail.setWants(userDetailRequest.getWants());
         userDetail.setNeeds(userDetailRequest.getNeeds());
+        userDetail.setNotificationSubscribed(userDetailRequest.isNotificationSubscribed());
 
         return userDetailsRepository.save(userDetail);
     }

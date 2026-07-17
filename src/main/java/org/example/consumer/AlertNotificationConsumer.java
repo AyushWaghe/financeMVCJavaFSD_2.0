@@ -11,7 +11,7 @@ public class AlertNotificationConsumer {
             groupId = "alert-notification-group"
     )
     public void alertNotificationConsumer(AlertNotificationEvent alertNotificationEvent){
-        System.out.println("Alert notification service ");
+        System.out.println("Alert notification service triggered");
         System.out.println(alertNotificationEvent);
     }
 }

@@ -3,55 +3,49 @@ package org.example.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-//    @Autowired
-//    private AuthService authService; //Autowired your custom created auth service. Make sure it is implementing user Detail service inteface
-        //Here note that no need to call auth service since spring security automatically picks the auth service since it implements user detail service
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable()) // needed for POST APIs
+        return http
+                .cors(Customizer.withDefaults())
+                .csrf(csrf -> csrf.disable())
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) //Telling spring not to maintain any sessions and everything is stateless
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/auth/**").permitAll() // allow login & register
-//                        .anyRequest().authenticated()
-                                .anyRequest().permitAll()
+                        .requestMatchers("/auth/**").permitAll()
+                        .anyRequest().authenticated()
                 )
-
-
-                .formLogin(form -> form.disable()) // ❌ disable default login page
-                .httpBasic(basic -> basic.disable()); // optional (disable basic auth)
-
-        return http.build();
+                .formLogin(form -> form.disable())
+                .httpBasic(basic -> basic.disable())
+                .addFilterBefore(
+                        jwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                )
+                .build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();  //This bcrypt password encoder is the implementation class which implements password encoder
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration configuration
+    ) throws Exception {
+        return configuration.getAuthenticationManager();
     }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception{
-        return configuration.getAuthenticationManager();  //This is a configuration class
-    }
-    //Authentication manager is the component responsible for verifying credentials.
-    /*
-    The above code means
-    Give me Spring Security's internally configured AuthenticationManager
-and register it as a bean so I can inject and use it manually.
-     */
-
 }

@@ -23,13 +23,12 @@ public interface BillInstanceRepository extends JpaRepository<BillInstance,Integ
     @Query("DELETE FROM BillInstance b WHERE b.billInstanceId = :billInstanceId")
     int deleteBillInstanceById(Integer billInstanceId);
 
-    @Query("""
-    SELECT b
-    FROM BillInstance b
-    WHERE b.dueDate = :targetDate
-    AND b.billStatus <> 'PAID'
-""")
-    List<BillInstance> findDueBills(@Param("targetDate") LocalDate targetDate);
+    List<BillInstance> findByBillStatusAndDueDate(
+            BillStatus billStatus,
+            LocalDate dueDate
+    );
+
+
 
     List<BillInstance> findByUserUserIdAndDueDateGreaterThanEqualAndBillStatus(
             Integer userId,

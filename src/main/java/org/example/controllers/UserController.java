@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/user-profile")
 public class UserController {
 
     @Autowired
@@ -28,24 +28,25 @@ public class UserController {
                 userDetail.getNeeds(),
                 userDetail.getWants(),
                 userDetail.getSavings(),
-                userDetail.getTotalBal(),
                 userDetail.getAddress(),
-                userDetail.getUsername()
+                userDetail.getUsername(),
+                userDetail.isNotificationSubscribed()
                 );
         return new ResponseEntity<>(userDetailsResponse,HttpStatus.OK);
     }
 
-    @PutMapping()
-    public ResponseEntity<APIResponse<UserDetailsResponse>> saveUserDetails(@Valid @RequestBody UserDetailRequest userDetailRequest){
-        UserDetail userDetail=userService.saveUserDetails(userDetailRequest);
+    @PutMapping("/{userId}")
+    public ResponseEntity<APIResponse<UserDetailsResponse>> saveUserDetails(@Valid @RequestBody UserDetailRequest userDetailRequest,@PathVariable("userId") Integer userId){
+        System.out.println(userDetailRequest);
+        UserDetail userDetail=userService.saveUserDetails(userDetailRequest,userId);
 
         UserDetailsResponse userDetailsResponse=new UserDetailsResponse(
                 userDetail.getNeeds(),
                 userDetail.getWants(),
                 userDetail.getSavings(),
-                userDetail.getTotalBal(),
                 userDetail.getAddress(),
-                userDetail.getUsername()
+                userDetail.getUsername(),
+                userDetail.isNotificationSubscribed()
         );
 
         APIResponse<UserDetailsResponse> apiResponse=new APIResponse<>();

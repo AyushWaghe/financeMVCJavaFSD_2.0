@@ -13,18 +13,18 @@ public class UserDetailsResponse {
 
     private Integer savings;
 
-    private BigDecimal total_bal;
-
     private String address;
 
-    private String username;
+    private String name;
 
-    public UserDetailsResponse(Integer needs, Integer wants, Integer savings, BigDecimal total_bal, String address, String username) {
+    private boolean notificationSubscribed;
+
+    public UserDetailsResponse(Integer needs, Integer wants, Integer savings, String address, String name,boolean notificationSubscribed) {
         this.needs = needs;
         this.wants = wants;
         this.savings = savings;
-        this.total_bal = total_bal;
         this.address = address;
-        this.username=username;
+        this.name=name;
+        this.notificationSubscribed=notificationSubscribed;
     }
 }

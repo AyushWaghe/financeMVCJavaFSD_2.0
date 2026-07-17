@@ -10,8 +10,6 @@ import java.math.BigDecimal;
 public class UserDetailRequest {
 
 //    @NotBlank(message = "User id cannot be null")---> This is for strings only for Integer follow the below
-    @NotNull(message = "User id cannot be null")
-    private Integer id;
 
     private Integer needs;
 
@@ -19,19 +17,18 @@ public class UserDetailRequest {
 
     private Integer savings;
 
-    private BigDecimal total_bal;
-
     private String address;
 
     private String name;
 
-    public UserDetailRequest(Integer id, Integer needs, Integer wants, Integer savings, BigDecimal total_bal, String address, String name) {
-        this.id = id;
+    private boolean notificationSubscribed;
+
+    public UserDetailRequest(Integer needs, Integer wants, Integer savings, BigDecimal total_bal, String address, String name,boolean notificationSubscribed) {
         this.needs = needs;
         this.wants = wants;
         this.savings = savings;
-        this.total_bal = total_bal;
         this.address = address;
         this.name = name;
+        this.notificationSubscribed=notificationSubscribed;
     }
 }

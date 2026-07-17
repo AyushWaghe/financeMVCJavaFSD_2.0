@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.dao.UserRepository;
 import org.example.dto.AuthRequest;
 import org.example.dto.AuthResponse;
+import org.example.dto.AuthResult;
 import org.example.models.User;
 import org.example.security.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class AuthService {  //Login
     @Autowired
     private final UserRepository userRepository;
 
-    public AuthResponse loginUser(AuthRequest authRequest) {
+    public AuthResult loginUser(AuthRequest authRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -45,14 +46,16 @@ public class AuthService {  //Login
 
             String token = jwtService.generateAccessToken(user);
 
-            return new AuthResponse(
+            return new AuthResult(new AuthResponse(
                     true,
                     user.getUserId(),
                     user.getUseremail(),
                     "Login successful"
-            );
+            ),token);
+
+
         }catch (BadCredentialsException e){
-            return new AuthResponse(false,null,"","Login Unsuccessful");
+            return new AuthResult(new AuthResponse(false,null,null,"Login unsuccessful"),null);
         }
     }
 }

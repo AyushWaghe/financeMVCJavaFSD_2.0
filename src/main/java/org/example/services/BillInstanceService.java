@@ -131,8 +131,9 @@ public class BillInstanceService {
 
     public void processDueBills() {
 
+        System.out.println("Prcessing due bulls");
         LocalDate targetDate=LocalDate.now().plusDays(3);
-        List<BillInstance> dueBills=billInstanceRepository.findDueBills(targetDate);
+        List<BillInstance> dueBills=billInstanceRepository.findByBillStatusAndDueDate(BillStatus.PENDING,targetDate);
 
         for (BillInstance bill : dueBills) {
             BillReminderEvent event = new BillReminderEvent(
@@ -143,7 +144,7 @@ public class BillInstanceService {
                     bill.getBillStatus()
             );
 
-            System.out.println(dueBills);
+            System.out.println("dueBills"+dueBills);
 
             kafkaTemplate.send("bill-reminder-topic", bill.getUser().getUserId().toString(), event);
         }

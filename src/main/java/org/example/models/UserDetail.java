@@ -30,9 +30,6 @@ public class UserDetail {
     @Column(name="address")
     private String address;
 
-    @Column(name="total_bal")
-    private BigDecimal totalBal;
-
     @Column(name="needs")
     private Integer needs;
 
