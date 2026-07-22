@@ -6,6 +6,7 @@ import org.example.dao.MonthlyTransactionSummaryRepository;
 import org.example.dto.*;
 import org.example.models.MonthlyTransactionSummary;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Year;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class AnalyticsService {
 
     private final AnalyticsRepository analyticsRepository;

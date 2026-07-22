@@ -15,6 +15,7 @@ import org.example.models.BillInstance;
 import org.example.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ public class BillService {
     private final UserRepository userRepository;
     private final BillInstanceRepository billInstanceRepository;
 
+    @Transactional
     public BillResponse saveBill(BillRequest billRequest) {
         User user=userRepository.findById(billRequest.getUserId())
                 .orElseThrow(()-> new UserDetailNotFoundException("User with id "+billRequest.getUserId()+" not found"));
@@ -47,6 +49,7 @@ public class BillService {
         return BillMapper.toBillResponse(savedBill);
     }
 
+    @Transactional(readOnly = true)
     public List<BillResponse> getUserBills(Integer userId) {
         User user=userRepository.findById(userId)
                 .orElseThrow(()-> new UserDetailNotFoundException("User with id "+userId+" not found"));
@@ -62,6 +65,7 @@ public class BillService {
                 .toList();
     }
 
+    @Transactional
     public void deleteBill(Integer billId) {
         int rows=billRepository.deleteBillById(billId);
 
@@ -70,6 +74,7 @@ public class BillService {
         }
     }
 
+    @Transactional
     public BillResponse updateBill(BillRequest billRequest,Integer billId) {
         Bill bill=billRepository.findById(billId).orElseThrow(()->new ResourceNotFoundException("No bill found with bill id "+billId+" to update"));
         bill.setBillRecurrence(billRequest.getBillRecurrence());

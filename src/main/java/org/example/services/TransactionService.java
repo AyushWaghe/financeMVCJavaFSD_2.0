@@ -1,6 +1,5 @@
 package org.example.services;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.dao.CategoryRepository;
 import org.example.dao.MonthlyTransactionSummaryRepository;
@@ -15,6 +14,7 @@ import org.example.models.Category;
 import org.example.models.Transaction;
 import org.example.models.User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -29,6 +29,7 @@ public class TransactionService {
     private final UserRepository userRepository;
     private final CategoryService categoryService;
     private final MonthlyTransactionSummaryService monthlyTransactionSummaryService;
+
 
     @Transactional
     public Transaction saveTransaction(TransactionRequest transactionRequest){
@@ -57,6 +58,7 @@ public class TransactionService {
 
     }
 
+    @Transactional(readOnly = true)
     public List<TransactionResponse> getTransactions(Integer userId, LocalDate startDate,LocalDate endDate) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserDetailNotFoundException("User with id "+userId+" not found"));
@@ -91,6 +93,7 @@ public class TransactionService {
 
     }
 
+    @Transactional(readOnly = true)
     public List<TransactionResponse> getTransactionsMonthly(Integer userId, Integer month,Integer year) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserDetailNotFoundException("User with id "+userId+" not found"));
@@ -112,6 +115,7 @@ public class TransactionService {
 
     }
 
+    @Transactional
     public void updateTransaction(TransactionRequest transactionRequest, Integer id) {
         Transaction transaction=transactionRepository.findById(id).orElseThrow(()->new TransactionNotFoundException("User with id "+transactionRequest.getUserId()+" not found"));
         Transaction oldTransaction=new Transaction(transaction);
@@ -134,7 +138,7 @@ public class TransactionService {
         monthlyTransactionSummaryService.updateMonthlySummaryOnTransactionUpdate(oldTransaction,updatedTransaction);
     }
 
-//    @Transactional
+    @Transactional
     public void deleteTransaction(Integer tId) {
 
         Transaction transaction = transactionRepository.findById(tId)

@@ -10,6 +10,7 @@ import org.example.models.MonthlyTransactionSummary;
 import org.example.models.Transaction;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -22,6 +23,7 @@ public class MonthlyTransactionSummaryService {
     private final KafkaTemplate<String, MonthlySummaryUpdatedEvent> kafkaTemplate;
 
 
+    @Transactional
     public void updateMonthlySummaryOnTransactionCreate(Transaction transaction) {
 
         int year = transaction.getTransactionDate().getYear();
@@ -54,6 +56,7 @@ public class MonthlyTransactionSummaryService {
 
     }
 
+    @Transactional
     public void updateMonthlySummaryOnTransactionUpdate(Transaction oldTransaction,Transaction newTransaction) {
 
         int oldYear = oldTransaction.getTransactionDate().getYear();
@@ -121,6 +124,7 @@ public class MonthlyTransactionSummaryService {
         }
     }
 
+    @Transactional
     public void updateMonthlySummaryOnTransactionDelete(Transaction transaction) {
         int year = transaction.getTransactionDate().getYear();
         int month = transaction.getTransactionDate().getMonthValue();

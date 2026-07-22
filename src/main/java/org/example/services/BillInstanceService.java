@@ -16,6 +16,7 @@ import org.example.models.Transaction;
 import org.example.models.User;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,6 +30,7 @@ public class BillInstanceService {
     private final BillRepository billRepository;
     private final KafkaTemplate<String,BillReminderEvent> kafkaTemplate;
 
+    @Transactional
     public BillInstanceResponse saveBillInstance(BillInstanceRequest billInstanceRequest) {
         User user = userRepository.findById(billInstanceRequest.getUserId())
                 .orElseThrow(() -> new UserDetailNotFoundException("User with id " + billInstanceRequest.getUserId() + " not found"));
@@ -44,6 +46,7 @@ public class BillInstanceService {
         return BillMapper.toBillInstanceResponse(savedBill);
     }
 
+    @Transactional(readOnly = true)
     public List<BillInstanceResponse> getUpcomingBillInsances(Integer userId) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserDetailNotFoundException("User with id " + userId + " not found"));
@@ -59,6 +62,7 @@ public class BillInstanceService {
         ).toList();
     }
 
+    @Transactional(readOnly = true)
     public List<BillInstanceResponse> getOverDueBillInsances(Integer userId) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserDetailNotFoundException("User with id " + userId + " not found"));
@@ -74,6 +78,7 @@ public class BillInstanceService {
         ).toList();
     }
 
+    @Transactional(readOnly = true)
     public List<BillInstanceResponse> getBillInstancesByStatus(Integer userId,BillStatus status) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserDetailNotFoundException("User with id " + userId + " not found"));
@@ -89,6 +94,7 @@ public class BillInstanceService {
         ).toList();
     }
 
+    @Transactional
     public void deleteBillInstance(Integer billInstanceId) {
         int rows=billInstanceRepository.deleteBillInstanceById(billInstanceId);
 
@@ -97,6 +103,7 @@ public class BillInstanceService {
         }
     }
 
+    @Transactional
     public void updateBillInstance(BillInstanceRequest billInstanceRequest) {
 
         BillInstance existingBillInstance = billInstanceRepository.findById(billInstanceRequest.getBillInstanceId())
@@ -117,6 +124,7 @@ public class BillInstanceService {
         billInstanceRepository.save(existingBillInstance);
     }
 
+    @Transactional
     public void updateBillInstanceStatus(BillInstanceStatusRequest billInstanceStatusRequest) {
 
         BillInstance existingBillInstance = billInstanceRepository.findById(billInstanceStatusRequest.getBillInstanceId())
@@ -129,6 +137,7 @@ public class BillInstanceService {
         billInstanceRepository.save(existingBillInstance);
     }
 
+    @Transactional(readOnly = true)
     public void processDueBills() {
 
         System.out.println("Prcessing due bulls");

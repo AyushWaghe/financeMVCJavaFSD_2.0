@@ -6,6 +6,7 @@ import org.example.models.User;
 import org.example.utils.CategoryUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -15,6 +16,8 @@ public class CategoryService {
     @Autowired
     CategoryRepository categoryRepository;
 
+
+    @Transactional()
     public Category findOrCreateCategory(User user,String categoryTitle){
         String normalizedCategory;
 
