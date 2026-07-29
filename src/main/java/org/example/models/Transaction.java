@@ -18,7 +18,13 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "transactions")
+@Table(name = "transactions",
+indexes = {
+        @Index(
+                name = "idx_transaction_userid_transaction_date",
+                columnList = "user_id, transaction_date"
+        )
+})
 public class Transaction {
 
     @Id
