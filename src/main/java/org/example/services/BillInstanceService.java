@@ -32,8 +32,7 @@ public class BillInstanceService {
 
     @Transactional
     public BillInstanceResponse saveBillInstance(BillInstanceRequest billInstanceRequest) {
-        User user = userRepository.findById(billInstanceRequest.getUserId())
-                .orElseThrow(() -> new UserDetailNotFoundException("User with id " + billInstanceRequest.getUserId() + " not found"));
+        User user = userRepository.getReferenceById(billInstanceRequest.getUserId());
 
         Bill bill = null;
         if (billInstanceRequest.getBillId() != null) {
@@ -48,8 +47,6 @@ public class BillInstanceService {
 
     @Transactional(readOnly = true)
     public List<BillInstanceResponse> getUpcomingBillInsances(Integer userId) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new UserDetailNotFoundException("User with id " + userId + " not found"));
 
         List<BillInstance> billInstances=billInstanceRepository.findByUserUserIdAndDueDateGreaterThanEqualAndBillStatus(userId,LocalDate.now(), BillStatus.PENDING);
 
@@ -64,9 +61,6 @@ public class BillInstanceService {
 
     @Transactional(readOnly = true)
     public List<BillInstanceResponse> getOverDueBillInsances(Integer userId) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new UserDetailNotFoundException("User with id " + userId + " not found"));
-
         List<BillInstance> billInstances=billInstanceRepository.findByUserUserIdAndDueDateLessThanAndBillStatus(userId,LocalDate.now(), BillStatus.PENDING);
 
         return billInstances.stream().map(b->new BillInstanceResponse(
@@ -80,9 +74,6 @@ public class BillInstanceService {
 
     @Transactional(readOnly = true)
     public List<BillInstanceResponse> getBillInstancesByStatus(Integer userId,BillStatus status) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new UserDetailNotFoundException("User with id " + userId + " not found"));
-
         List<BillInstance> billInstances=billInstanceRepository.findByUserUserIdAndBillStatus(userId, status);
 
         return billInstances.stream().map(b->new BillInstanceResponse(

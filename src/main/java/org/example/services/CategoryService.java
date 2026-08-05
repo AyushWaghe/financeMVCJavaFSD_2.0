@@ -1,6 +1,7 @@
 package org.example.services;
 
 import org.example.dao.CategoryRepository;
+import org.example.dao.UserRepository;
 import org.example.models.Category;
 import org.example.models.User;
 import org.example.utils.CategoryUtil;
@@ -16,9 +17,12 @@ public class CategoryService {
     @Autowired
     CategoryRepository categoryRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
 
     @Transactional()
-    public Category findOrCreateCategory(User user,String categoryTitle){
+    public Category findOrCreateCategory(Integer userId,String categoryTitle){
         String normalizedCategory;
 
         if(categoryTitle==null || categoryTitle.isEmpty()){
@@ -27,7 +31,9 @@ public class CategoryService {
             normalizedCategory= CategoryUtil.normalizeString(categoryTitle);
         }
 
-        Optional<Category> category=categoryRepository.findByUser_UserIdAndTitle(user.getUserId(),normalizedCategory);
+        Optional<Category> category=categoryRepository.findByUser_UserIdAndTitle(userId,normalizedCategory);
+
+        User user=userRepository.getReferenceById(userId);
 
         if(category.isEmpty()){ //New category for that user to be added
             Category newCategory=new Category();

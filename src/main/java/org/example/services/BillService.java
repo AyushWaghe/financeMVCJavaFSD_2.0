@@ -31,8 +31,7 @@ public class BillService {
 
     @Transactional
     public BillResponse saveBill(BillRequest billRequest) {
-        User user=userRepository.findById(billRequest.getUserId())
-                .orElseThrow(()-> new UserDetailNotFoundException("User with id "+billRequest.getUserId()+" not found"));
+        User user=userRepository.getReferenceById(billRequest.getUserId());
 
         Bill bill= BillMapper.toEntity(billRequest,user);
         Bill savedBill=billRepository.save(bill);
@@ -51,15 +50,9 @@ public class BillService {
 
     @Transactional(readOnly = true)
     public List<BillResponse> getUserBills(Integer userId) {
-        User user=userRepository.findById(userId)
-                .orElseThrow(()-> new UserDetailNotFoundException("User with id "+userId+" not found"));
-
         List<Bill> userBills=billRepository.findByUserUserId(userId);
         List<BillResponse> billResponses=new ArrayList<>();
 
-//        for(Bill b:userBills){
-//            billResponses.add(BillMapper.toBillResponse(b));
-//        }
         return userBills.stream() //.stream converts the list to the stream pipeline
                 .map(BillMapper::toBillResponse) //This transforms each element into another form
                 .toList();

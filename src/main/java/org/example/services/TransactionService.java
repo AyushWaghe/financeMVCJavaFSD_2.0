@@ -34,10 +34,9 @@ public class TransactionService {
     @Transactional
     public Transaction saveTransaction(TransactionRequest transactionRequest){
 
-        User user = userRepository.findById(transactionRequest.getUserId())
-                .orElseThrow(() -> new UserDetailNotFoundException("User with id "+transactionRequest.getUserId()+" not found"));
+        User user = userRepository.getReferenceById(transactionRequest.getUserId());
 
-        Category category=categoryService.findOrCreateCategory(user,transactionRequest.getCategory());
+        Category category=categoryService.findOrCreateCategory(transactionRequest.getUserId(),transactionRequest.getCategory());
 
         Transaction transaction= Transaction.builder()
                 .user(user)
@@ -60,9 +59,6 @@ public class TransactionService {
 
     @Transactional(readOnly = true)
     public List<TransactionResponse> getTransactions(Integer userId, LocalDate startDate,LocalDate endDate) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserDetailNotFoundException("User with id "+userId+" not found"));
-
         if(startDate!=null && endDate!=null && startDate.isAfter(endDate)){
             throw new IllegalArgumentException("Start date cannot be after end date.");
         }
@@ -76,7 +72,7 @@ public class TransactionService {
             endDate = today;
         }
 
-        List<Transaction> transactions=transactionRepository.findByUser_UserIdAndTransactionDateBetween(user.getUserId(),startDate,endDate);
+        List<Transaction> transactions=transactionRepository.findByUser_UserIdAndTransactionDateBetween(userId,startDate,endDate);
         List<TransactionResponse> transactionList=transactions.stream().map(t-> new TransactionResponse(
                 t.getId(),
                 t.getTitle(),
@@ -95,10 +91,8 @@ public class TransactionService {
 
     @Transactional(readOnly = true)
     public List<TransactionResponse> getTransactionsMonthly(Integer userId, Integer month,Integer year) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserDetailNotFoundException("User with id "+userId+" not found"));
 
-        List<Transaction> transactions=transactionRepository.getTransactionsByUserMonthAndYear(user.getUserId(),month,year);
+        List<Transaction> transactions=transactionRepository.getTransactionsByUserMonthAndYear(userId,month,year);
         List<TransactionResponse> transactionList=transactions.stream().map(t-> new TransactionResponse(
                         t.getId(),
                         t.getTitle(),
@@ -123,7 +117,7 @@ public class TransactionService {
             throw new IllegalArgumentException("User id from transaction "+transaction.getUser().getUserId()+" and transaction request "+transactionRequest.getUserId()+ " did not match");
         }
 
-        Category category=categoryService.findOrCreateCategory(transaction.getUser(),transactionRequest.getCategory());
+        Category category=categoryService.findOrCreateCategory(transaction.getUser().getUserId(),transactionRequest.getCategory());
 
         transaction.setTitle(transactionRequest.getTitle());
         transaction.setDescription(transactionRequest.getDescription());
