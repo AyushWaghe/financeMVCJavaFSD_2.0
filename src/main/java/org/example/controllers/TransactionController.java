@@ -2,10 +2,15 @@ package org.example.controllers;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.example.dto.APIResponse;
 import org.example.dto.TransactionRequest;
 import org.example.dto.TransactionResponse;
+import org.example.dto.UserCategoriesResponse;
+import org.example.models.Category;
 import org.example.models.Transaction;
+import org.example.models.User;
+import org.example.services.CategoryService;
 import org.example.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,11 +22,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/transactions")
 public class TransactionController {
 
-    @Autowired
-    TransactionService transactionService;
+
+    private final TransactionService transactionService;
+    private final CategoryService categoryService;
 
     @PostMapping()
     public ResponseEntity<APIResponse<Void>> saveTransaction(@Valid @RequestBody TransactionRequest transactionRequest){
@@ -39,6 +46,23 @@ public class TransactionController {
         apiResponse.setData(transactionResponses);
         apiResponse.setSuccess(true);
         apiResponse.setMessage("Transactions fetched successfully");
+        return new ResponseEntity<>(apiResponse,HttpStatus.OK);
+    }
+
+    @GetMapping("/categories")
+    public ResponseEntity<APIResponse<List<UserCategoriesResponse>>> getUserCategories(@RequestParam("userId") Integer userId){
+        List<Category> userCategories=categoryService.getCategories(userId);
+        List<UserCategoriesResponse> response =
+                userCategories.stream()
+                        .map(category -> new UserCategoriesResponse(
+                                category.getId(),
+                                category.getTitle()
+                        ))
+                        .toList();
+        APIResponse<List<UserCategoriesResponse>> apiResponse=new APIResponse<>();
+        apiResponse.setData(response);
+        apiResponse.setSuccess(true);
+        apiResponse.setMessage("User categories fetched successfully");
         return new ResponseEntity<>(apiResponse,HttpStatus.OK);
     }
 

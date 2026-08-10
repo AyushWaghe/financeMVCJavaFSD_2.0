@@ -1,6 +1,7 @@
 package org.example.services;
 
 
+import lombok.RequiredArgsConstructor;
 import org.example.dao.UserDetailsRepository;
 import org.example.dao.UserRepository;
 import org.example.dto.UserDetailRequest;
@@ -8,22 +9,25 @@ import org.example.exceptions.UserDetailNotFoundException;
 import org.example.models.User;
 import org.example.models.UserDetail;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
-    UserDetailsRepository userDetailsRepository;
+    private final UserDetailsRepository userDetailsRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    UserRepository userRepository;
 
-    public UserDetail getUserDetails(Integer id){
-        Optional<UserDetail> userDetail=userDetailsRepository.findById(id);
+    @Cacheable("user-profile")
+    public UserDetail getUserDetails(Integer userId){
+        Optional<UserDetail> userDetail=userDetailsRepository.findById(userId);
 
         if(userDetail.isEmpty()){
             throw new UserDetailNotFoundException("User details not found");
@@ -33,6 +37,7 @@ public class UserService {
     }
 
     @Transactional
+    @CachePut(value = "user-profile",key = "#userId")
     public UserDetail saveUserDetails(UserDetailRequest userDetailRequest,Integer userId) {
         User user=userRepository.getReferenceById(userId);
         UserDetail userDetail=userDetailsRepository.findById(userId).orElseThrow(()-> new UserDetailNotFoundException("User details not found"));

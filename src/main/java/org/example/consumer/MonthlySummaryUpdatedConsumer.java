@@ -10,8 +10,10 @@ import org.example.exceptions.UserDetailNotFoundException;
 import org.example.models.MonthlyTransactionSummary;
 import org.example.models.User;
 import org.example.models.UserDetail;
+import org.example.services.UserService;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -26,6 +28,7 @@ public class MonthlySummaryUpdatedConsumer {
     private final MonthlyTransactionSummaryRepository monthlyTransactionSummaryRepository;
     private final UserDetailsRepository userDetailsRepository;
     private final KafkaTemplate<String, AlertNotificationEvent> kafkaTemplate;
+    private final UserService userService;
 
     @KafkaListener(
             topics = "monthly-summary-updated-topic",
@@ -35,7 +38,7 @@ public class MonthlySummaryUpdatedConsumer {
         System.out.println("Recieved monthly summary updated event");
 
         Integer userId=monthlySummaryUpdatedEvent.userId();
-        UserDetail userDetail=userDetailsRepository.findById(userId).orElseThrow(() -> new UserDetailNotFoundException("No user details found for user id"+userId));
+        UserDetail userDetail=userService.getUserDetails(userId);
 
         if(!userDetail.isNotificationSubscribed()) return;  //User has not subscribed to receive notification
 

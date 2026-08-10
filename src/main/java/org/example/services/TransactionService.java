@@ -36,7 +36,17 @@ public class TransactionService {
 
         User user = userRepository.getReferenceById(transactionRequest.getUserId());
 
-        Category category=categoryService.findOrCreateCategory(transactionRequest.getUserId(),transactionRequest.getCategory());
+        List<Category> userCategories=categoryService.getCategories(transactionRequest.getUserId());
+        Category category=null;
+        for(Category c:userCategories){
+            if(transactionRequest.getCategory().equals(c.getTitle())){
+                category=c;
+                break;
+            }
+        }
+        if(category==null) {    //User category not found create one
+            category=categoryService.createCategory(transactionRequest.getUserId(),transactionRequest.getCategory());
+        }
 
         Transaction transaction= Transaction.builder()
                 .user(user)
@@ -117,7 +127,17 @@ public class TransactionService {
             throw new IllegalArgumentException("User id from transaction "+transaction.getUser().getUserId()+" and transaction request "+transactionRequest.getUserId()+ " did not match");
         }
 
-        Category category=categoryService.findOrCreateCategory(transaction.getUser().getUserId(),transactionRequest.getCategory());
+        List<Category> userCategories=categoryService.getCategories(transaction.getUser().getUserId());
+        Category category=null;
+        for(Category c:userCategories){
+            if(transactionRequest.getCategory().equals(c.getTitle())){
+                category=c;
+                break;
+            }
+        }
+        if(category==null) {    //User category not found create one
+            category=categoryService.createCategory(transactionRequest.getUserId(),transactionRequest.getCategory());
+        }
 
         transaction.setTitle(transactionRequest.getTitle());
         transaction.setDescription(transactionRequest.getDescription());

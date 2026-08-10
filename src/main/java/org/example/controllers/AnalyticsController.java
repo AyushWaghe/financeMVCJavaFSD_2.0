@@ -16,8 +16,6 @@ import java.util.List;
 public class AnalyticsController {
     private final AnalyticsService analyticsService;
 
-
-
     @GetMapping("/monthly-savings/user/{userId}")
     public ResponseEntity<APIResponse<List<MonthlySpendingResponse>>> getMonthlySavings(@PathVariable("userId") Integer userId,@RequestParam("year") Integer year){
         List<MonthlySpendingResponse> response =
