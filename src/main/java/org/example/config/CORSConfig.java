@@ -12,6 +12,11 @@ public class CORSConfig {
     @Value("${frontend.url}")
     private String frontendUrl;
 
+    @Value("${finance.ai.url}")
+    private String financeAIURL;
+
+
+
     @Bean
     public WebMvcConfigurer corsConfigurer() {
 
@@ -23,7 +28,8 @@ public class CORSConfig {
                 registry.addMapping("/**")
                         .allowedOrigins(
                                 "http://localhost:3000",
-                                frontendUrl
+                                frontendUrl,
+                                financeAIURL
                         )
                         .allowedMethods("GET","POST","PUT","DELETE","PATCH","OPTIONS")
                         .allowedHeaders("*")
