@@ -13,6 +13,8 @@ import org.example.exceptions.UserDetailNotFoundException;
 import org.example.models.Category;
 import org.example.models.Transaction;
 import org.example.models.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -69,6 +71,7 @@ public class TransactionService {
 
     @Transactional(readOnly = true)
     public List<TransactionResponse> getTransactions(Integer userId, LocalDate startDate,LocalDate endDate) {
+
         if(startDate!=null && endDate!=null && startDate.isAfter(endDate)){
             throw new IllegalArgumentException("Start date cannot be after end date.");
         }
@@ -100,22 +103,19 @@ public class TransactionService {
     }
 
     @Transactional(readOnly = true)
-    public List<TransactionResponse> getTransactionsMonthly(Integer userId, Integer month,Integer year) {
+    public Page<TransactionResponse> getTransactionsMonthly(Integer userId, Integer month, Integer year, Pageable pageable) {
 
-        List<Transaction> transactions=transactionRepository.getTransactionsByUserMonthAndYear(userId,month,year);
-        List<TransactionResponse> transactionList=transactions.stream().map(t-> new TransactionResponse(
-                        t.getId(),
-                        t.getTitle(),
-                        t.getDescription(),
-                        t.getAmount(),
-                        t.getCategory().getTitle(),
-                        t.getTransactionDate(),
-                        t.getType(),
-                        t.getSpendingType()
-                )
-        ).toList();
-
-        return transactionList;
+        Page<Transaction> transactions=transactionRepository.getTransactionsByUserMonthAndYear(userId,month,year,pageable);
+        return transactions.map(t -> new TransactionResponse(
+                t.getId(),
+                t.getTitle(),
+                t.getDescription(),
+                t.getAmount(),
+                t.getCategory().getTitle(),
+                t.getTransactionDate(),
+                t.getType(),
+                t.getSpendingType()
+        ));
 
     }
 

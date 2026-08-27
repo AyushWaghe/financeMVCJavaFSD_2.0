@@ -14,6 +14,8 @@ import org.example.models.Bill;
 import org.example.models.BillInstance;
 import org.example.models.Transaction;
 import org.example.models.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,43 +48,43 @@ public class BillInstanceService {
     }
 
     @Transactional(readOnly = true)
-    public List<BillInstanceResponse> getUpcomingBillInsances(Integer userId) {
+    public Page<BillInstanceResponse> getUpcomingBillInsances(Integer userId, Pageable pageable) {
 
-        List<BillInstance> billInstances=billInstanceRepository.findByUserUserIdAndDueDateGreaterThanEqualAndBillStatus(userId,LocalDate.now(), BillStatus.PENDING);
+        Page<BillInstance> billInstances=billInstanceRepository.findByUserUserIdAndDueDateGreaterThanEqualAndBillStatus(userId,LocalDate.now(), BillStatus.PENDING,pageable);
 
-        return billInstances.stream().map(b->new BillInstanceResponse(
+        return billInstances.map(b->new BillInstanceResponse(
                 b.getBillInstanceId(),
                 b.getTitle(),
                 b.getAmount(),
                 b.getDueDate(), b.getBillStatus()
         )
-        ).toList();
+        );
     }
 
     @Transactional(readOnly = true)
-    public List<BillInstanceResponse> getOverDueBillInsances(Integer userId) {
-        List<BillInstance> billInstances=billInstanceRepository.findByUserUserIdAndDueDateLessThanAndBillStatus(userId,LocalDate.now(), BillStatus.PENDING);
+    public Page<BillInstanceResponse> getOverDueBillInsances(Integer userId,Pageable pageable) {
+        Page<BillInstance> billInstances=billInstanceRepository.findByUserUserIdAndDueDateLessThanAndBillStatus(userId,LocalDate.now(), BillStatus.PENDING,pageable);
 
-        return billInstances.stream().map(b->new BillInstanceResponse(
+        return billInstances.map(b->new BillInstanceResponse(
                         b.getBillInstanceId(),
                         b.getTitle(),
                         b.getAmount(),
                         b.getDueDate(), b.getBillStatus()
                 )
-        ).toList();
+        );
     }
 
     @Transactional(readOnly = true)
-    public List<BillInstanceResponse> getBillInstancesByStatus(Integer userId,BillStatus status) {
-        List<BillInstance> billInstances=billInstanceRepository.findByUserUserIdAndBillStatus(userId, status);
+    public Page<BillInstanceResponse> getBillInstancesByStatus(Integer userId,BillStatus status,Pageable pageable) {
+        Page<BillInstance> billInstances=billInstanceRepository.findByUserUserIdAndBillStatus(userId, status,pageable);
 
-        return billInstances.stream().map(b->new BillInstanceResponse(
+        return billInstances.map(b->new BillInstanceResponse(
                         b.getBillInstanceId(),
                         b.getTitle(),
                         b.getAmount(),
                         b.getDueDate(), b.getBillStatus()
                 )
-        ).toList();
+        );
     }
 
     @Transactional

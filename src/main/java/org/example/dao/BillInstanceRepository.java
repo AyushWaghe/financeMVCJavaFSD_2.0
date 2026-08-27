@@ -4,6 +4,8 @@ import jakarta.transaction.Transactional;
 import org.example.enums.BillStatus;
 import org.example.models.Bill;
 import org.example.models.BillInstance;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -30,21 +32,24 @@ public interface BillInstanceRepository extends JpaRepository<BillInstance,Integ
 
 
 
-    List<BillInstance> findByUserUserIdAndDueDateGreaterThanEqualAndBillStatus(
+    Page<BillInstance> findByUserUserIdAndDueDateGreaterThanEqualAndBillStatus(
             Integer userId,
             LocalDate dueDate,
-            BillStatus billStatus
+            BillStatus billStatus,
+            Pageable pageable
     );
 
-    List<BillInstance> findByUserUserIdAndDueDateLessThanAndBillStatus(
+    Page<BillInstance> findByUserUserIdAndDueDateLessThanAndBillStatus(
             Integer userId,
             LocalDate dueDate,
-            BillStatus billStatus
+            BillStatus billStatus,
+            Pageable pageable
     );
 
-    List<BillInstance> findByUserUserIdAndBillStatus(
+    Page<BillInstance> findByUserUserIdAndBillStatus(
             Integer userId,
-            BillStatus billStatus
+            BillStatus billStatus,
+            Pageable pageable
     );
 
 

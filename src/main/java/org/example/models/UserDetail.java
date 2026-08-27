@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -41,4 +43,10 @@ public class UserDetail {
 
     @Column(name = "notification_subscribed")
     private boolean notificationSubscribed=true;
+
+    @Column(name = "reasoning_credits")
+    private Integer reasoning_credits=20;
+
+    @Column(name = "reasoning_credits_finished_at")
+    private LocalDateTime reasoningCreditsFinishedAt;
 }

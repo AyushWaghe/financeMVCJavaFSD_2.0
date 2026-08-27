@@ -14,6 +14,8 @@ import org.example.models.Bill;
 import org.example.models.BillInstance;
 import org.example.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,13 +51,10 @@ public class BillService {
     }
 
     @Transactional(readOnly = true)
-    public List<BillResponse> getUserBills(Integer userId) {
-        List<Bill> userBills=billRepository.findByUserUserId(userId);
-        List<BillResponse> billResponses=new ArrayList<>();
+    public Page<BillResponse> getUserBills(Integer userId, Pageable pageable) {
+        Page<Bill> userBills=billRepository.findByUserUserId(userId,pageable);
 
-        return userBills.stream() //.stream converts the list to the stream pipeline
-                .map(BillMapper::toBillResponse) //This transforms each element into another form
-                .toList();
+        return userBills.map(BillMapper::toBillResponse);
     }
 
     @Transactional

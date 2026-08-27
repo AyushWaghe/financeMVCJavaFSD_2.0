@@ -35,6 +35,28 @@ public class UserController {
         return new ResponseEntity<>(userDetailsResponse,HttpStatus.OK);
     }
 
+    @GetMapping("/getCredits")
+    @ResponseBody
+    public ResponseEntity<APIResponse<Integer>> getReasoningCredits(@RequestParam("userId") Integer userId){
+       Integer reasoningCredits= userService.getReasoningCredits(userId);
+       APIResponse apiResponse=new APIResponse();
+       apiResponse.setData(reasoningCredits);
+       apiResponse.setMessage("Credits fetched successfully");
+       apiResponse.setSuccess(true);
+        return new ResponseEntity<>(apiResponse,HttpStatus.OK);
+    }
+
+    @GetMapping("/decrementCredit")
+    @ResponseBody
+    public ResponseEntity<APIResponse<Integer>> decrementCredits(@RequestParam("userId") Integer userId){
+        Integer reasoningCredits=userService.decrementCredits(userId);
+        APIResponse apiResponse=new APIResponse();
+        apiResponse.setData(reasoningCredits);
+        apiResponse.setMessage("Credits decremented successfully");
+        apiResponse.setSuccess(true);
+        return new ResponseEntity<>(apiResponse,HttpStatus.OK);
+    }
+
     @PutMapping("/{userId}")
     public ResponseEntity<APIResponse<UserDetailsResponse>> saveUserDetails(@Valid @RequestBody UserDetailRequest userDetailRequest,@PathVariable("userId") Integer userId){
         System.out.println(userDetailRequest);

@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
 public class UserDetailsResponse {
@@ -18,6 +19,8 @@ public class UserDetailsResponse {
     private String name;
 
     private boolean notificationSubscribed;
+
+    private LocalDateTime reasoningCredits;
 
     public UserDetailsResponse(Integer needs, Integer wants, Integer savings, String address, String name,boolean notificationSubscribed) {
         this.needs = needs;

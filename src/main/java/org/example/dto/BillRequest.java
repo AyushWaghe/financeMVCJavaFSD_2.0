@@ -30,6 +30,4 @@ public class BillRequest {
 
 //    @NotNull
     private BillRecurrence billRecurrence;
-
-    private Integer billId; //Template id of the bill
 }

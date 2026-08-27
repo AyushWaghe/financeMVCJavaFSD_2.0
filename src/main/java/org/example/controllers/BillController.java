@@ -9,6 +9,10 @@ import org.example.dto.BillResponse;
 import org.example.models.Bill;
 import org.example.services.BillService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,9 +38,9 @@ public class BillController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<APIResponse<List<BillResponse>>> getBills(@PathVariable("userId") Integer userId){
-        List<BillResponse> billResponses=billService.getUserBills(userId);
-        APIResponse<List<BillResponse>> apiResponse=new APIResponse();
+    public ResponseEntity<APIResponse<Page<BillResponse>>> getBills(@PathVariable("userId") Integer userId, @PageableDefault(size = 5,sort = "latestDueDate",direction = Sort.Direction.DESC)Pageable pageable){
+        Page<BillResponse> billResponses=billService.getUserBills(userId,pageable);
+        APIResponse<Page<BillResponse>> apiResponse=new APIResponse();
         apiResponse.setData(billResponses);
         apiResponse.setSuccess(true);
         apiResponse.setMessage("User bills fetched successfully");

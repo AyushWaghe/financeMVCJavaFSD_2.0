@@ -13,6 +13,10 @@ import org.example.models.User;
 import org.example.services.CategoryService;
 import org.example.services.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -67,9 +71,9 @@ public class TransactionController {
     }
 
     @GetMapping("/monthly")
-    public ResponseEntity<APIResponse<List<TransactionResponse>>> getTransactionsMonthly(@RequestParam Integer userId,Integer month,Integer year){
-        List<TransactionResponse> transactionResponses=transactionService.getTransactionsMonthly(userId,month,year);
-        APIResponse<List<TransactionResponse>> apiResponse=new APIResponse<>();
+    public ResponseEntity<APIResponse<Page<TransactionResponse>>> getTransactionsMonthly(@RequestParam Integer userId, Integer month, Integer year, @PageableDefault(size =20,sort = "transactionDate",direction = Sort.Direction.DESC)Pageable pageable){
+        Page<TransactionResponse> transactionResponses=transactionService.getTransactionsMonthly(userId,month,year,pageable);
+        APIResponse<Page<TransactionResponse>> apiResponse=new APIResponse<>();
         apiResponse.setData(transactionResponses);
         apiResponse.setSuccess(true);
         apiResponse.setMessage("Transactions fetched successfully");

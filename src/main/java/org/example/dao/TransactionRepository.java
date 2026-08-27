@@ -2,6 +2,8 @@ package org.example.dao;
 
 import jakarta.transaction.Transactional;
 import org.example.models.Transaction;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -39,9 +41,10 @@ public interface TransactionRepository extends JpaRepository<Transaction,Integer
       AND YEAR(t.transactionDate) = :year
     ORDER BY t.transactionDate DESC
 """)
-    List<Transaction> getTransactionsByUserMonthAndYear(
+    Page<Transaction> getTransactionsByUserMonthAndYear(
             @Param("userId") Integer userId,
             @Param("month") Integer month,
-            @Param("year") Integer year
+            @Param("year") Integer year,
+            Pageable pageable
     );
 }

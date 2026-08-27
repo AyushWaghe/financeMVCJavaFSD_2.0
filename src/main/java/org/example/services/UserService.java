@@ -15,6 +15,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -23,6 +24,7 @@ public class UserService {
 
     private final UserDetailsRepository userDetailsRepository;
     private final UserRepository userRepository;
+    private final Integer CREDIT_RESET_LIMIT=20;
 
 
     @Cacheable("user-profile")
@@ -51,4 +53,53 @@ public class UserService {
 
         return userDetailsRepository.save(userDetail);
     }
+
+    @Transactional
+    public Integer getReasoningCredits(Integer userId){
+
+        Optional<UserDetail> userDetail=userDetailsRepository.findById(userId);
+        if(userDetail.isEmpty()){
+            throw new UserDetailNotFoundException("User details not found");
+        }
+
+        Integer credits=userDetail.get().getReasoning_credits();
+        if(credits!=null || credits!=0){
+            return credits;
+        }
+        LocalDateTime reasoningCreditsFinishTime=userDetail.get().getReasoningCreditsFinishedAt();
+        boolean creditsReset =
+                reasoningCreditsFinishTime != null &&
+                        reasoningCreditsFinishTime.isBefore(LocalDateTime.now().minusHours(24));
+
+        if(creditsReset){ //reset user credits
+            credits=CREDIT_RESET_LIMIT;
+            userDetail.get().setReasoning_credits(credits);
+            userDetailsRepository.save(userDetail.get());
+        }
+
+        return credits;
+    }
+
+    @Transactional
+    public Integer decrementCredits(Integer userId){
+
+        Optional<UserDetail> userDetail=userDetailsRepository.findById(userId);
+        if(userDetail.isEmpty()){
+            throw new UserDetailNotFoundException("User details not found");
+        }
+
+        Integer credits=userDetail.get().getReasoning_credits();
+
+        if(credits==0 || credits==null) return -1;
+
+        credits=credits-1;
+        if(credits==0){
+            userDetail.get().setReasoningCreditsFinishedAt(LocalDateTime.now());
+        }
+        userDetail.get().setReasoning_credits(credits);
+        userDetailsRepository.save(userDetail.get());
+        return credits;
+    }
+
+
 }

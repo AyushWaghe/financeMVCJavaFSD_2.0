@@ -9,7 +9,8 @@ import java.math.BigDecimal;
 
 @Data
 @Builder
-public class MonthStatsResponse {
+public class
+MonthStatsResponse {
 
     @NotNull
     BigDecimal totalIncome;

@@ -5,6 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.example.dto.*;
 import org.example.enums.BillStatus;
 import org.example.services.BillInstanceService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,10 +33,9 @@ public class BillInstanceController {
     }
 
     @GetMapping("/upcoming/{userId}")
-    public ResponseEntity<APIResponse<List<BillInstanceResponse>>> getUpcomingBillInstances(@PathVariable("userId") Integer userId){
-        List<BillInstanceResponse> billInstances=billInstanceService.getUpcomingBillInsances(userId);
-//        System.out.println(billInstances);
-        APIResponse<List<BillInstanceResponse>> apiResponse=new APIResponse<>();
+    public ResponseEntity<APIResponse<Page<BillInstanceResponse>>> getUpcomingBillInstances(@PathVariable("userId") Integer userId, @PageableDefault(size = 5,sort = "dueDate",direction = Sort.Direction.DESC)Pageable pageable){
+        Page<BillInstanceResponse> billInstances=billInstanceService.getUpcomingBillInsances(userId,pageable);
+        APIResponse<Page<BillInstanceResponse>> apiResponse=new APIResponse<>();
         apiResponse.setData(billInstances);
         apiResponse.setSuccess(true);
         apiResponse.setMessage("Bill instances fetched successfully");
@@ -40,10 +43,10 @@ public class BillInstanceController {
     }
 
     @GetMapping("status/user/{userId}")
-    public ResponseEntity<APIResponse<List<BillInstanceResponse>>> getBillInstancesByStatus(@PathVariable("userId") Integer userId, @RequestParam("status") BillStatus billStatus){
-        List<BillInstanceResponse> billInstances=billInstanceService.getBillInstancesByStatus(userId,billStatus);
+    public ResponseEntity<APIResponse<Page<BillInstanceResponse>>> getBillInstancesByStatus(@PathVariable("userId") Integer userId, @RequestParam("status") BillStatus billStatus,@PageableDefault(size = 10,sort = "dueDate",direction = Sort.Direction.DESC)Pageable pageable){
+        Page<BillInstanceResponse> billInstances=billInstanceService.getBillInstancesByStatus(userId,billStatus,pageable);
 //        System.out.println(billInstances);
-        APIResponse<List<BillInstanceResponse>> apiResponse=new APIResponse<>();
+        APIResponse<Page<BillInstanceResponse>> apiResponse=new APIResponse<>();
         apiResponse.setData(billInstances);
         apiResponse.setSuccess(true);
         apiResponse.setMessage("Bill instances fetched successfully");
@@ -51,10 +54,10 @@ public class BillInstanceController {
     }
 
     @GetMapping("overdue/{userId}")
-    public ResponseEntity<APIResponse<List<BillInstanceResponse>>> getOverDueBillInstances(@PathVariable("userId") Integer userId){
-        List<BillInstanceResponse> billInstances=billInstanceService.getOverDueBillInsances(userId);
+    public ResponseEntity<APIResponse<Page<BillInstanceResponse>>> getOverDueBillInstances(@PathVariable("userId") Integer userId,Pageable pageable){
+        Page<BillInstanceResponse> billInstances=billInstanceService.getOverDueBillInsances(userId,pageable);
 //        System.out.println(billInstances);
-        APIResponse<List<BillInstanceResponse>> apiResponse=new APIResponse<>();
+        APIResponse<Page<BillInstanceResponse>> apiResponse=new APIResponse<>();
         apiResponse.setData(billInstances);
         apiResponse.setSuccess(true);
         apiResponse.setMessage("Bill instances fetched successfully");

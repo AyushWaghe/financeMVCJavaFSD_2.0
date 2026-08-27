@@ -60,6 +60,8 @@ public class AuthController {
         cookie.setMaxAge(60 * 60); // 1 hour
         response.addCookie(cookie); //Browser will now store this cookie upon receiving
 
+        System.out.println("JWT FOR TESTING-:"+jwt);
+
         if(authResponse.isSuccess()){
             return new ResponseEntity<>(authResponse, HttpStatus.CREATED);
         }else{
@@ -82,6 +84,7 @@ public class AuthController {
                     .build();
 
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+            System.out.println("JWT FOR TESTING-:"+jwt);
             return new ResponseEntity<>(authResponse,HttpStatus.OK);
         }else{
             return new ResponseEntity<>(authResponse,HttpStatus.UNAUTHORIZED);
