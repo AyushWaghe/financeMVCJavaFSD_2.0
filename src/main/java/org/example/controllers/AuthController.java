@@ -84,7 +84,6 @@ public class AuthController {
                     .build();
 
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-            System.out.println("JWT FOR TESTING-:"+jwt);
             return new ResponseEntity<>(authResponse,HttpStatus.OK);
         }else{
             return new ResponseEntity<>(authResponse,HttpStatus.UNAUTHORIZED);
