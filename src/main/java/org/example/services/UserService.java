@@ -63,20 +63,15 @@ public class UserService {
         }
 
         Integer credits=userDetail.get().getReasoning_credits();
-        if(credits!=null || credits!=0){
-            return credits;
-        }
         LocalDateTime reasoningCreditsFinishTime=userDetail.get().getReasoningCreditsFinishedAt();
         boolean creditsReset =
                 reasoningCreditsFinishTime != null &&
                         reasoningCreditsFinishTime.isBefore(LocalDateTime.now().minusHours(24));
-
         if(creditsReset){ //reset user credits
             credits=CREDIT_RESET_LIMIT;
             userDetail.get().setReasoning_credits(credits);
             userDetailsRepository.save(userDetail.get());
         }
-
         return credits;
     }
 

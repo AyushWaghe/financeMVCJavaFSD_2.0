@@ -1,6 +1,7 @@
 package org.example.controllers;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.example.dto.APIResponse;
 import org.example.dto.UserDetailRequest;
 import org.example.dto.UserDetailsResponse;
@@ -15,10 +16,10 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/user-profile")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    UserService userService;
+    private final UserService userService;
 
     @GetMapping("/{id}")
     @ResponseBody
