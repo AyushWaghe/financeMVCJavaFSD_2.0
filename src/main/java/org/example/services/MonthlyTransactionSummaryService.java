@@ -45,7 +45,7 @@ public class MonthlyTransactionSummaryService {
 
         updateMonthlySummaryDelta(transaction,month,year,amount,userId);
 
-        if(year==LocalDate.now().getYear() && month==LocalDate.now().getMonthValue()){
+        if(year==LocalDate.now().getYear() && month==LocalDate.now().getMonthValue()){ //Compare with current date only since notification we are sending for the current ongoing month only. Hence, we need to focus on current changes of transactions in the ongoing month
             MonthlySummaryUpdatedEvent monthlySummaryUpdatedEvent=new MonthlySummaryUpdatedEvent(userId);
             kafkaTemplate.send(
                     "monthly-summary-updated-topic",
@@ -66,7 +66,6 @@ public class MonthlyTransactionSummaryService {
         Integer userId = oldTransaction.getUser().getUserId();
         BigDecimal oldAmount = oldTransaction.getAmount().negate();
         BigDecimal newAmount = newTransaction.getAmount();
-        System.out.println("Old year is"+oldYear);
 
         if(newYear!=oldYear || newMonth!=oldMonth){ //Transaction date updated hence monthly entries to be updated
 
@@ -162,11 +161,9 @@ public class MonthlyTransactionSummaryService {
                 );
 
                 case SAVINGS ->{
-                    System.out.println("When in savings");
                     monthlyTransactionSummaryRepository.updateSavingsExpense(
                             userId, year, month, changeAmount
                     );
-                    System.out.println("Reached here");
                 }
             }
         }

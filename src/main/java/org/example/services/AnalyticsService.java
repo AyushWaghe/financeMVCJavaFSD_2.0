@@ -21,8 +21,6 @@ public class AnalyticsService {
     private final AnalyticsRepository analyticsRepository;
     private final MonthlyTransactionSummaryRepository monthlyTransactionSummaryRepository;
 
-
-
     public List<MonthlySpendingResponse> getMonthlySavings(Integer userId,Integer year) {
 
         List<Object[]> result =
@@ -40,7 +38,6 @@ public class AnalyticsService {
     }
 
     public MonthStatsResponse getMonthStats(Integer userId, Integer month, Integer year) {
-
         Optional<MonthlyTransactionSummary> monthlyTransactionSummary =
                 monthlyTransactionSummaryRepository.findByUserUserIdAndYearAndMonth(
                         userId,

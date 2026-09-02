@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -47,6 +48,7 @@ public class UserDetail {
     @Column(name = "reasoning_credits")
     private Integer reasoning_credits=20;
 
+    @CreationTimestamp
     @Column(name = "reasoning_credits_finished_at")
     private LocalDateTime reasoningCreditsFinishedAt;
 }

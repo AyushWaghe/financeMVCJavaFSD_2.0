@@ -106,7 +106,7 @@ public class TransactionService {
     public Page<TransactionResponse> getTransactionsMonthly(Integer userId, Integer month, Integer year, Pageable pageable) {
 
         Page<Transaction> transactions=transactionRepository.getTransactionsByUserMonthAndYear(userId,month,year,pageable);
-        return transactions.map(t -> new TransactionResponse(
+        return transactions.map(t -> new TransactionResponse( //Did not use .stream here since page gives map method internally to us hence directly used that
                 t.getId(),
                 t.getTitle(),
                 t.getDescription(),
@@ -116,7 +116,6 @@ public class TransactionService {
                 t.getType(),
                 t.getSpendingType()
         ));
-
     }
 
     @Transactional
