@@ -1,10 +1,12 @@
 package org.example.controllers;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.*;
 import org.example.enums.BillStatus;
 import org.example.services.BillInstanceService;
+import org.example.utils.AuthenticationUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -32,8 +34,9 @@ public class BillInstanceController {
         return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
     }
 
-    @GetMapping("/upcoming/{userId}")
-    public ResponseEntity<APIResponse<Page<BillInstanceResponse>>> getUpcomingBillInstances(@PathVariable("userId") Integer userId, @PageableDefault(size = 5,sort = "dueDate",direction = Sort.Direction.DESC)Pageable pageable){
+    @GetMapping("/upcoming")
+    public ResponseEntity<APIResponse<Page<BillInstanceResponse>>> getUpcomingBillInstances(@PageableDefault(size = 5,sort = "dueDate",direction = Sort.Direction.DESC)Pageable pageable){
+        Integer userId= AuthenticationUtil.getCurrentUserId();
         Page<BillInstanceResponse> billInstances=billInstanceService.getUpcomingBillInsances(userId,pageable);
         APIResponse<Page<BillInstanceResponse>> apiResponse=new APIResponse<>();
         apiResponse.setData(billInstances);
@@ -42,8 +45,9 @@ public class BillInstanceController {
         return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
     }
 
-    @GetMapping("status/user/{userId}")
-    public ResponseEntity<APIResponse<Page<BillInstanceResponse>>> getBillInstancesByStatus(@PathVariable("userId") Integer userId, @RequestParam("status") BillStatus billStatus,@PageableDefault(size = 10,sort = "dueDate",direction = Sort.Direction.DESC)Pageable pageable){
+    @GetMapping("status/user")
+    public ResponseEntity<APIResponse<Page<BillInstanceResponse>>> getBillInstancesByStatus(@RequestParam("status") BillStatus billStatus,@PageableDefault(size = 10,sort = "dueDate",direction = Sort.Direction.DESC)Pageable pageable){
+        Integer userId= AuthenticationUtil.getCurrentUserId();
         Page<BillInstanceResponse> billInstances=billInstanceService.getBillInstancesByStatus(userId,billStatus,pageable);
 //        System.out.println(billInstances);
         APIResponse<Page<BillInstanceResponse>> apiResponse=new APIResponse<>();
@@ -53,8 +57,9 @@ public class BillInstanceController {
         return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
     }
 
-    @GetMapping("overdue/{userId}")
-    public ResponseEntity<APIResponse<Page<BillInstanceResponse>>> getOverDueBillInstances(@PathVariable("userId") Integer userId,Pageable pageable){
+    @GetMapping("overdue")
+    public ResponseEntity<APIResponse<Page<BillInstanceResponse>>> getOverDueBillInstances(Pageable pageable){
+        Integer userId= AuthenticationUtil.getCurrentUserId();
         Page<BillInstanceResponse> billInstances=billInstanceService.getOverDueBillInsances(userId,pageable);
 //        System.out.println(billInstances);
         APIResponse<Page<BillInstanceResponse>> apiResponse=new APIResponse<>();
@@ -63,17 +68,6 @@ public class BillInstanceController {
         apiResponse.setMessage("Bill instances fetched successfully");
         return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
     }
-
-//    @GetMapping("/{userId}")
-//    public ResponseEntity<APIResponse<List<BillInstanceResponse>>> getBillInstances(@PathVariable("userId") Integer userId){
-//        List<BillInstanceResponse> billInstances=billInstanceService.getBillInsances(userId);
-////        System.out.println(billInstances);
-//        APIResponse<List<BillInstanceResponse>> apiResponse=new APIResponse<>();
-//        apiResponse.setData(billInstances);
-//        apiResponse.setSuccess(true);
-//        apiResponse.setMessage("Bill instances fetched successfully");
-//        return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
-//    }
 
     @DeleteMapping("/{billId}")
     public ResponseEntity<APIResponse<Void>> deleteBillInstance(@PathVariable("billId") Integer billId){

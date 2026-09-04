@@ -49,6 +49,6 @@ public class UserDetail {
     private Integer reasoning_credits=20;
 
     @CreationTimestamp
-    @Column(name = "reasoning_credits_finished_at")
-    private LocalDateTime reasoningCreditsFinishedAt;
+    @Column(name = "reasoning_credits_reset_at")
+    private LocalDateTime reasoningCreditsResetAt;
 }

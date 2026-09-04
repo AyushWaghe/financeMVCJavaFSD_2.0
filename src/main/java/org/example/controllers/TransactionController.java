@@ -12,6 +12,7 @@ import org.example.models.Transaction;
 import org.example.models.User;
 import org.example.services.CategoryService;
 import org.example.services.TransactionService;
+import org.example.utils.AuthenticationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -44,7 +45,8 @@ public class TransactionController {
     }
 
     @GetMapping()
-    public ResponseEntity<APIResponse<List<TransactionResponse>>> getTransactions(@RequestParam Integer userId, @RequestParam(required = false) LocalDate startDate, @RequestParam(required = false) LocalDate endDate){
+    public ResponseEntity<APIResponse<List<TransactionResponse>>> getTransactions(@RequestParam(required = false) LocalDate startDate, @RequestParam(required = false) LocalDate endDate){
+        Integer userId= AuthenticationUtil.getCurrentUserId();
         List<TransactionResponse> transactionResponses=transactionService.getTransactions(userId,startDate,endDate);
         APIResponse<List<TransactionResponse>> apiResponse=new APIResponse<>();
         apiResponse.setData(transactionResponses);
@@ -54,7 +56,8 @@ public class TransactionController {
     }
 
     @GetMapping("/categories")
-    public ResponseEntity<APIResponse<List<UserCategoriesResponse>>> getUserCategories(@RequestParam("userId") Integer userId){
+    public ResponseEntity<APIResponse<List<UserCategoriesResponse>>> getUserCategories(){
+        Integer userId= AuthenticationUtil.getCurrentUserId();
         List<Category> userCategories=categoryService.getCategories(userId);
         List<UserCategoriesResponse> response =
                 userCategories.stream()
@@ -71,7 +74,8 @@ public class TransactionController {
     }
 
     @GetMapping("/monthly")
-    public ResponseEntity<APIResponse<Page<TransactionResponse>>> getTransactionsMonthly(@RequestParam Integer userId, Integer month, Integer year, @PageableDefault(size =20,sort = "transactionDate",direction = Sort.Direction.DESC)Pageable pageable){
+    public ResponseEntity<APIResponse<Page<TransactionResponse>>> getTransactionsMonthly(Integer month, Integer year, @PageableDefault(size =20,sort = "transactionDate",direction = Sort.Direction.DESC)Pageable pageable){
+        Integer userId= AuthenticationUtil.getCurrentUserId();
         Page<TransactionResponse> transactionResponses=transactionService.getTransactionsMonthly(userId,month,year,pageable);
         APIResponse<Page<TransactionResponse>> apiResponse=new APIResponse<>();
         apiResponse.setData(transactionResponses);

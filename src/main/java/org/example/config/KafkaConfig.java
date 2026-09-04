@@ -9,7 +9,7 @@ import org.springframework.kafka.config.TopicBuilder;
 public class KafkaConfig {
 
 
-    //Generste topic
+    //Generate topic
     @Bean
     public NewTopic billReminderTopic() {
 

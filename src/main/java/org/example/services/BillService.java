@@ -13,6 +13,7 @@ import org.example.mapper.BillMapper;
 import org.example.models.Bill;
 import org.example.models.BillInstance;
 import org.example.models.User;
+import org.example.utils.AuthenticationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,7 +34,8 @@ public class BillService {
 
     @Transactional
     public BillResponse saveBill(BillRequest billRequest) {
-        User user=userRepository.getReferenceById(billRequest.getUserId());
+        Integer userId=AuthenticationUtil.getCurrentUserId();
+        User user=userRepository.getReferenceById(userId);
 
         Bill bill= BillMapper.toEntity(billRequest,user);
         Bill savedBill=billRepository.save(bill);

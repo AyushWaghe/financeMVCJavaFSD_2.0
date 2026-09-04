@@ -63,7 +63,7 @@ public class UserService {
         }
 
         Integer credits=userDetail.get().getReasoning_credits();
-        LocalDateTime reasoningCreditsFinishTime=userDetail.get().getReasoningCreditsFinishedAt();
+        LocalDateTime reasoningCreditsFinishTime=userDetail.get().getReasoningCreditsResetAt();
         boolean creditsReset =
                 reasoningCreditsFinishTime != null &&
                         reasoningCreditsFinishTime.isBefore(LocalDateTime.now().minusHours(24));
@@ -88,9 +88,6 @@ public class UserService {
         if(credits==0 || credits==null) return -1;
 
         credits=credits-1;
-        if(credits==0){
-            userDetail.get().setReasoningCreditsFinishedAt(LocalDateTime.now());
-        }
         userDetail.get().setReasoning_credits(credits);
         userDetailsRepository.save(userDetail.get());
         return credits;

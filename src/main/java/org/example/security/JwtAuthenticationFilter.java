@@ -1,5 +1,6 @@
 package org.example.security;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -9,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.example.services.UserDetailServiceImpl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -16,19 +18,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Collections;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final UserDetailServiceImpl userDetailsService;
 
     public JwtAuthenticationFilter(
-            JwtService jwtService,
-            UserDetailServiceImpl userDetailsService
+            JwtService jwtService
     ) {
         this.jwtService = jwtService;
-        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -43,27 +43,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (token != null
                 && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
-                String email = jwtService.extractUsername(token);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+                Claims claims=jwtService.extractAllClaims(token); //Validate token here itself
 
-                if (jwtService.validateToken(token, userDetails)) {
-                    UsernamePasswordAuthenticationToken authentication =
+                    UsernamePasswordAuthenticationToken authentication = //Creating authentication object
                             new UsernamePasswordAuthenticationToken(
-                                    userDetails,
+                                    claims.get("userId",Integer.class), //Principal
                                     null,
-                                    userDetails.getAuthorities()
+                                    Collections.emptyList()
                             );
-
                     authentication.setDetails(
                             new WebAuthenticationDetailsSource().buildDetails(request)
                     );
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
-                }
+
             } catch (JwtException | IllegalArgumentException exception) {
                 SecurityContextHolder.clearContext();
-                // Invalid, expired, malformed, or tampered JWT:
-                // Spring Security will return 401 for protected endpoints.
             }
         }
 
@@ -77,7 +72,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return authorization.substring(7);
         }
 
-        // Supports your existing HttpOnly "jwt" cookie
+        // Supports HttpOnly "jwt" cookie
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if ("jwt".equals(cookie.getName())) {

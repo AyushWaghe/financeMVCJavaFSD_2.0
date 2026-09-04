@@ -12,9 +12,6 @@ import java.time.LocalDate;
 @Data
 public class BillRequest {
 
-    @NotNull
-    private Integer userId;
-
     @NotBlank
     @Size(min = 3, max = 100, message = "Title must be between 3 and 100 characters")
     private String title;

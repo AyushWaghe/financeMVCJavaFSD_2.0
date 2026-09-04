@@ -6,32 +6,21 @@ import org.example.dto.AuthRequest;
 import org.example.dto.AuthResponse;
 import org.example.dto.AuthResult;
 import org.example.exceptions.UserExistsException;
+import org.example.models.User;
 import org.example.models.UserDetail;
 import org.example.security.JwtService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class UserDetailServiceImpl implements UserDetailsService { //Signup
 
-    @Autowired
-    UserRepository userRepository;
 
-    @Autowired
-    PasswordEncoder passwordEncoder;  //This bean is injected/autowired from the spring security config which we have created
-
-    @Autowired
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;  //This bean is injected/autowired from the spring security config which we have created
     private final JwtService jwtService;
 
 
@@ -44,26 +33,19 @@ public class UserDetailServiceImpl implements UserDetailsService { //Signup
         }
 
         String encodedPassword =passwordEncoder.encode(authRequest.getPassword());
-        UserDetail userDetail=new UserDetail();
+        UserDetail userDetail=new UserDetail(); //My own applications user detail not of spring's sec
         org.example.models.User user=new org.example.models.User(encodedPassword, useremail, userDetail);
         userDetail.setUser(user);
         org.example.models.User savedUser=userRepository.save(user);
-        String token=jwtService.generateAccessToken(user);
+        String token=jwtService.generateAccessToken(new CustomUserDetails(user));
         AuthResponse authResponse=new AuthResponse(true,savedUser.getUserId(),useremail,"User registered successfully");
 
         return new AuthResult(authResponse,token);
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException { //THIS METHOD IS CALLED DURING LOGIN
-        Optional<org.example.models.User> user=userRepository.findByUseremail(username);
-        if (!user.isEmpty()){
-            UserDetails userDetails=org.springframework.security.core.userdetails.User.builder()
-                    .username(user.get().getUseremail())
-                    .password(user.get().getPassword())
-                    .build();   //Here we are building user details
-            return userDetails;
-        }
-        throw new UsernameNotFoundException("User not found");
+    public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException { //THIS METHOD IS CALLED DURING LOGIN by Authentication provider which is intern called by authentication manager
+        User user=userRepository.findByUseremail(username).orElseThrow(()-> new UsernameNotFoundException("User not found"));
+        return new CustomUserDetails(user);
     }
 }

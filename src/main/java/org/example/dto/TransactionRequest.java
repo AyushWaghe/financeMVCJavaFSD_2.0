@@ -16,9 +16,6 @@ import java.time.LocalDateTime;
 @Data
 public class TransactionRequest {
 
-    @NotNull(message = "User id cannot be null")
-    private Integer userId;
-
     private String title;
 
     private String description;

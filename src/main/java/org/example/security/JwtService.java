@@ -3,7 +3,7 @@ package org.example.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.example.models.User;
+import org.example.services.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -22,17 +22,17 @@ public class JwtService {
         return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateAccessToken(User user){
+    public String generateAccessToken(CustomUserDetails user){
         return Jwts.builder()
-                .subject(user.getUseremail().toString())
-                .claim("userId",user.getUserId().toString())
+                .subject(user.getUsername().toString())  //Subject claim means this tell what is this jwt about like whom does it belong to.
+                .claim("userId",user.getUserId())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis()+1000*60*60)) //Valid for 10mins
+                .expiration(new Date(System.currentTimeMillis()+1000*60*60)) //1 hour
                 .signWith(getSecretKey()) //Here we are passing the above secret key
                 .compact();
     }
 
-    private Claims extractAllClaims(String token){
+    public Claims extractAllClaims(String token){
         return Jwts.parser()
                 .verifyWith(getSecretKey())
                 .build()
@@ -50,6 +50,10 @@ public class JwtService {
 
     public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
+    }
+
+    public Integer extractUserId(String token) {
+        return extractAllClaims(token).get("userId",Integer.class); //Claims is a map and it returns object hence we need to do the type cast
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {

@@ -1,5 +1,6 @@
 package org.example.controllers;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.App;
@@ -8,6 +9,7 @@ import org.example.dto.BillRequest;
 import org.example.dto.BillResponse;
 import org.example.models.Bill;
 import org.example.services.BillService;
+import org.example.utils.AuthenticationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,8 +40,9 @@ public class BillController {
         return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<APIResponse<Page<BillResponse>>> getBills(@PathVariable("userId") Integer userId, @PageableDefault(size = 5,sort = "latestDueDate",direction = Sort.Direction.DESC)Pageable pageable){
+    @GetMapping("/user")
+    public ResponseEntity<APIResponse<Page<BillResponse>>> getBills(@PageableDefault(size = 5,sort = "latestDueDate",direction = Sort.Direction.DESC)Pageable pageable){
+        Integer userId= AuthenticationUtil.getCurrentUserId();
         Page<BillResponse> billResponses=billService.getUserBills(userId,pageable);
         APIResponse<Page<BillResponse>> apiResponse=new APIResponse();
         apiResponse.setData(billResponses);
@@ -58,7 +62,6 @@ public class BillController {
 
     @PutMapping("/{billId}")
     public ResponseEntity<APIResponse<BillResponse>> updateBill(@Valid @RequestBody BillRequest billRequest,@PathVariable("billId") Integer billId){
-        System.out.println(billId);
         BillResponse billResponse=billService.updateBill(billRequest,billId);
         APIResponse<BillResponse> apiResponse=new APIResponse<>();
         apiResponse.setMessage("Bill updated successfully");

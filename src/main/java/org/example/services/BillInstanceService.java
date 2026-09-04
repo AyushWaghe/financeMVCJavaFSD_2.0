@@ -14,6 +14,7 @@ import org.example.models.Bill;
 import org.example.models.BillInstance;
 import org.example.models.Transaction;
 import org.example.models.User;
+import org.example.utils.AuthenticationUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -34,7 +35,8 @@ public class BillInstanceService {
 
     @Transactional
     public BillInstanceResponse saveBillInstance(BillInstanceRequest billInstanceRequest) {
-        User user = userRepository.getReferenceById(billInstanceRequest.getUserId());
+        Integer userId= AuthenticationUtil.getCurrentUserId();
+        User user = userRepository.getReferenceById(userId);
 
         Bill bill = null;
         if (billInstanceRequest.getBillId() != null) {
@@ -103,10 +105,10 @@ public class BillInstanceService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Bill instance with id " + billInstanceRequest.getBillInstanceId() + " not found"
                 ));
-
-        userRepository.findById(billInstanceRequest.getUserId())
+        Integer userId= AuthenticationUtil.getCurrentUserId();
+        userRepository.findById(userId)
                 .orElseThrow(() -> new UserDetailNotFoundException(
-                        "User with id " + billInstanceRequest.getUserId() + " not found"
+                        "User with id " + userId + " not found"
                 ));
 
         existingBillInstance.setTitle(billInstanceRequest.getTitle());

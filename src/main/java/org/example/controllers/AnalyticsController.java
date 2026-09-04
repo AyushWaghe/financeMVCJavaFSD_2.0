@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.*;
 import org.example.services.AnalyticsService;
+import org.example.utils.AuthenticationUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +17,9 @@ import java.util.List;
 public class AnalyticsController {
     private final AnalyticsService analyticsService;
 
-    @GetMapping("/monthly-savings/user/{userId}")
-    public ResponseEntity<APIResponse<List<MonthlySpendingResponse>>> getMonthlySavings(@PathVariable("userId") Integer userId,@RequestParam("year") Integer year){
+    @GetMapping("/monthly-savings/user")
+    public ResponseEntity<APIResponse<List<MonthlySpendingResponse>>> getMonthlySavings(@RequestParam("year") Integer year){
+        Integer userId= AuthenticationUtil.getCurrentUserId();
         List<MonthlySpendingResponse> response =
                 analyticsService.getMonthlySavings(userId,year);
 
@@ -28,8 +30,9 @@ public class AnalyticsController {
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/month-stats/user/{userId}")
-    public ResponseEntity<APIResponse<MonthStatsResponse>> getMonthStats(@PathVariable("userId") Integer userId,@RequestParam("month") Integer month,@RequestParam("year") Integer year){
+    @GetMapping("/month-stats/user")
+    public ResponseEntity<APIResponse<MonthStatsResponse>> getMonthStats(@RequestParam("month") Integer month,@RequestParam("year") Integer year){
+        Integer userId= AuthenticationUtil.getCurrentUserId();
         MonthStatsResponse response =
                 analyticsService.getMonthStats(userId,month,year);
 
@@ -40,8 +43,9 @@ public class AnalyticsController {
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/monthly-needs-wants/user/{userId}")
-    public ResponseEntity<APIResponse<List<MonthlyNeedsWantsResponse>>> getMonthNeedsWants(@PathVariable("userId") Integer userId,@RequestParam("year") Integer year){
+    @GetMapping("/monthly-needs-wants/user")
+    public ResponseEntity<APIResponse<List<MonthlyNeedsWantsResponse>>> getMonthNeedsWants(@RequestParam("year") Integer year){
+        Integer userId= AuthenticationUtil.getCurrentUserId();
         List<MonthlyNeedsWantsResponse> response =
                 analyticsService.getMonthlyNeedsWants(userId,year);
 
@@ -52,8 +56,9 @@ public class AnalyticsController {
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/monthly-category/user/{userId}")
-    public ResponseEntity<APIResponse<List<MonthlyCategoryResponse>>> getCategoryWise(@PathVariable("userId") Integer userId,@RequestParam("year") Integer year,@RequestParam("month") Integer month){
+    @GetMapping("/monthly-category/user")
+    public ResponseEntity<APIResponse<List<MonthlyCategoryResponse>>> getCategoryWise(@RequestParam("year") Integer year,@RequestParam("month") Integer month){
+        Integer userId= AuthenticationUtil.getCurrentUserId();
         List<MonthlyCategoryResponse> response =
                 analyticsService.getCategoryWise(userId,year,month);
 
@@ -64,8 +69,9 @@ public class AnalyticsController {
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/income-vs-expense/user/{userId}")
-    public ResponseEntity<APIResponse<List<MonthlyIncomeExpenseReponse>>> getMonthlyIncomeExpense(@PathVariable("userId") Integer userId,@RequestParam("year") Integer year){
+    @GetMapping("/income-vs-expense/user")
+    public ResponseEntity<APIResponse<List<MonthlyIncomeExpenseReponse>>> getMonthlyIncomeExpense(@RequestParam("year") Integer year){
+        Integer userId= AuthenticationUtil.getCurrentUserId();
         List<MonthlyIncomeExpenseReponse> response =
                 analyticsService.getMonthlyIncomeVsExpense(userId,year);
 

@@ -45,9 +45,8 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<AuthResponse> registerUser(@Valid @RequestBody AuthRequest authRequest,
                                                     HttpServletResponse response){
+        //we use HTTP response here since we will be sending the cookie in the response
 
-        System.out.println(authRequest.getUseremail());
-        System.out.println(authRequest.getPassword());
         AuthResult authResult=  userDetailServiceImpl.registerUser(authRequest);
         AuthResponse authResponse=authResult.authResponse();
 
@@ -56,11 +55,9 @@ public class AuthController {
         //HTTP Cookie
         Cookie cookie=new Cookie("jwt",jwt);
         cookie.setHttpOnly(true);
-        cookie.setPath("/");
+        cookie.setPath("/"); //This means using this cookie u can access the endpoints like any endpoints throughout the application
         cookie.setMaxAge(60 * 60); // 1 hour
         response.addCookie(cookie); //Browser will now store this cookie upon receiving
-
-        System.out.println("JWT FOR TESTING-:"+jwt);
 
         if(authResponse.isSuccess()){
             return new ResponseEntity<>(authResponse, HttpStatus.CREATED);

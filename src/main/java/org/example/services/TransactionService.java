@@ -13,6 +13,7 @@ import org.example.exceptions.UserDetailNotFoundException;
 import org.example.models.Category;
 import org.example.models.Transaction;
 import org.example.models.User;
+import org.example.utils.AuthenticationUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -35,10 +36,10 @@ public class TransactionService {
 
     @Transactional
     public Transaction saveTransaction(TransactionRequest transactionRequest){
+        Integer userId= AuthenticationUtil.getCurrentUserId();
+        User user = userRepository.getReferenceById(userId);
 
-        User user = userRepository.getReferenceById(transactionRequest.getUserId());
-
-        List<Category> userCategories=categoryService.getCategories(transactionRequest.getUserId());
+        List<Category> userCategories=categoryService.getCategories(userId);
         Category category=null;
         for(Category c:userCategories){
             if(transactionRequest.getCategory().equals(c.getTitle())){
@@ -47,7 +48,7 @@ public class TransactionService {
             }
         }
         if(category==null) {    //User category not found create one
-            category=categoryService.createCategory(transactionRequest.getUserId(),transactionRequest.getCategory());
+            category=categoryService.createCategory(userId,transactionRequest.getCategory());
         }
 
         Transaction transaction= Transaction.builder()
@@ -120,10 +121,11 @@ public class TransactionService {
 
     @Transactional
     public void updateTransaction(TransactionRequest transactionRequest, Integer id) {
-        Transaction transaction=transactionRepository.findById(id).orElseThrow(()->new TransactionNotFoundException("User with id "+transactionRequest.getUserId()+" not found"));
+        Integer userId= AuthenticationUtil.getCurrentUserId();
+        Transaction transaction=transactionRepository.findById(id).orElseThrow(()->new TransactionNotFoundException("User with id "+userId+" not found"));
         Transaction oldTransaction=new Transaction(transaction);
-        if(!transaction.getUser().getUserId().equals(transactionRequest.getUserId())){
-            throw new IllegalArgumentException("User id from transaction "+transaction.getUser().getUserId()+" and transaction request "+transactionRequest.getUserId()+ " did not match");
+        if(!transaction.getUser().getUserId().equals(userId)){
+            throw new IllegalArgumentException("User id from transaction "+transaction.getUser().getUserId()+" and transaction request "+userId+ " did not match");
         }
 
         List<Category> userCategories=categoryService.getCategories(transaction.getUser().getUserId());
@@ -135,7 +137,7 @@ public class TransactionService {
             }
         }
         if(category==null) {    //User category not found create one
-            category=categoryService.createCategory(transactionRequest.getUserId(),transactionRequest.getCategory());
+            category=categoryService.createCategory(userId,transactionRequest.getCategory());
         }
 
         transaction.setTitle(transactionRequest.getTitle());
