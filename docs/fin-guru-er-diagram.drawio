@@ -1,0 +1,63 @@
+<mxfile host="app.diagrams.net" agent="Codex" version="24.7.17">
+  <diagram id="fin-guru-erd" name="Fin Guru ERD - Crow's Foot">
+    <mxGraphModel dx="1600" dy="950" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="&lt;b&gt;Fin Guru - Entity Relationship Diagram&lt;/b&gt;&lt;br&gt;Crow's-foot notation based on the current JPA mappings" style="text;html=1;align=center;verticalAlign=middle;fontColor=#1f2933;fontSize=20;" vertex="1" parent="1">
+          <mxGeometry x="470" y="20" width="860" height="55" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="externalUser" value="&lt;b&gt;Savings Saga User&lt;/b&gt; &lt;font color=&quot;#6b7280&quot;&gt;(external reference)&lt;/font&gt;&lt;hr&gt;&lt;b&gt;REF&lt;/b&gt;  user_id : INTEGER / BIGINT&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#6b7280&quot;&gt;Authenticated user identity is supplied through the JWT.&lt;br&gt;No users table or database FK exists inside FinanceAI.&lt;/font&gt;" style="swimlane;html=1;horizontal=1;startSize=30;rounded=0;fillColor=#ffffff;swimlaneFillColor=#dae8fc;strokeColor=#3f4a54;separatorColor=#3f4a54;fontColor=#1f2933;fontSize=13;align=left;verticalAlign=top;spacingLeft=10;spacingTop=7;" vertex="1" parent="1">
+          <mxGeometry x="655" y="105" width="490" height="175" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="userDocs" value="&lt;b&gt;user_docs&lt;/b&gt;&lt;hr&gt;&lt;b&gt;PK&lt;/b&gt;  id : INTEGER&lt;br&gt;&lt;b&gt;REF&lt;/b&gt;  user_id : INTEGER NOT NULL&lt;br&gt;doc_type : VARCHAR NULL&lt;br&gt;doc_summary : VARCHAR NULL&lt;br&gt;document_state : VARCHAR NULL&lt;br&gt;rejected_reason : VARCHAR NULL&lt;br&gt;object_key : VARCHAR NOT NULL&lt;br&gt;created_at : TIMESTAMP NULL&lt;br&gt;&lt;br&gt;&lt;b&gt;KEY GEN&lt;/b&gt;  SEQUENCE doc_seq (allocation 50)" style="swimlane;html=1;horizontal=1;startSize=30;rounded=0;fillColor=#ffffff;swimlaneFillColor=#e5e7eb;strokeColor=#3f4a54;separatorColor=#3f4a54;fontColor=#1f2933;fontSize=13;align=left;verticalAlign=top;spacingLeft=10;spacingTop=7;" vertex="1" parent="1">
+          <mxGeometry x="80" y="390" width="470" height="325" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="conversation" value="&lt;b&gt;conversation&lt;/b&gt;&lt;hr&gt;&lt;b&gt;PK&lt;/b&gt;  conversation_id : BIGINT&lt;br&gt;&lt;b&gt;REF&lt;/b&gt;  user_id : BIGINT NOT NULL&lt;br&gt;latest_summary : TEXT NULL&lt;br&gt;created_at : TIMESTAMP NOT NULL&lt;br&gt;summary_updated_at : TIMESTAMP NULL&lt;br&gt;updated_at : TIMESTAMP NOT NULL&lt;br&gt;&lt;br&gt;&lt;b&gt;KEY GEN&lt;/b&gt;  IDENTITY" style="swimlane;html=1;horizontal=1;startSize=30;rounded=0;fillColor=#ffffff;swimlaneFillColor=#e5e7eb;strokeColor=#3f4a54;separatorColor=#3f4a54;fontColor=#1f2933;fontSize=13;align=left;verticalAlign=top;spacingLeft=10;spacingTop=7;" vertex="1" parent="1">
+          <mxGeometry x="665" y="390" width="470" height="285" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="message" value="&lt;b&gt;message&lt;/b&gt;&lt;hr&gt;&lt;b&gt;PK&lt;/b&gt;  message_id : BIGINT&lt;br&gt;&lt;b&gt;FK&lt;/b&gt;  conversation_id : BIGINT NOT NULL&lt;br&gt;role : VARCHAR NOT NULL&lt;br&gt;content : TEXT NOT NULL&lt;br&gt;created_at : TIMESTAMP NOT NULL&lt;br&gt;&lt;br&gt;&lt;b&gt;KEY GEN&lt;/b&gt;  IDENTITY" style="swimlane;html=1;horizontal=1;startSize=30;rounded=0;fillColor=#ffffff;swimlaneFillColor=#e5e7eb;strokeColor=#3f4a54;separatorColor=#3f4a54;fontColor=#1f2933;fontSize=13;align=left;verticalAlign=top;spacingLeft=10;spacingTop=7;" vertex="1" parent="1">
+          <mxGeometry x="1250" y="410" width="450" height="245" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="enumNote" value="&lt;b&gt;Enumerated Values&lt;/b&gt;&lt;br&gt;&lt;b&gt;document_state&lt;/b&gt; = PROCESSING | COMPLETED | REJECTED | SERVER_ERROR&lt;br&gt;&lt;b&gt;role&lt;/b&gt; = USER | ASSISTANT" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=middle;spacing=12;fillColor=#f3f4f6;strokeColor=#9ca3af;fontSize=13;fontColor=#1f2933;" vertex="1" parent="1">
+          <mxGeometry x="665" y="750" width="470" height="115" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="scopeNote" value="&lt;b&gt;Relational Scope&lt;/b&gt;&lt;br&gt;Only JPA-managed PostgreSQL entities appear as physical tables.&lt;br&gt;S3 stores original files, Qdrant stores vector chunks, and Lucene stores the BM25 index; these are supporting stores rather than relational entities." style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=middle;spacing=12;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=13;fontColor=#1f2933;" vertex="1" parent="1">
+          <mxGeometry x="1190" y="750" width="510" height="135" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="integrityNote" value="&lt;b&gt;Current Schema Note&lt;/b&gt;&lt;br&gt;The service treats a user as having one active conversation, but &lt;b&gt;conversation.user_id&lt;/b&gt; is not currently marked UNIQUE. The dashed relationship therefore represents logical application ownership, not a database-enforced one-to-one constraint." style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=middle;spacing=12;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;fontColor=#1f2933;" vertex="1" parent="1">
+          <mxGeometry x="80" y="750" width="510" height="135" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="legend" value="&lt;b&gt;Legend&lt;/b&gt;&lt;br&gt;PK = Primary Key &amp;nbsp;|&amp;nbsp; FK = Enforced Foreign Key &amp;nbsp;|&amp;nbsp; REF = External logical reference&lt;br&gt;Solid connector = physical JPA relationship &amp;nbsp;|&amp;nbsp; Dashed connector = logical ownership only&lt;br&gt;Crow's-foot markers show exactly one, zero-or-one, and zero-or-many cardinalities." style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=middle;spacing=12;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;fontColor=#1f2933;" vertex="1" parent="1">
+          <mxGeometry x="420" y="930" width="960" height="120" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edgeUserDocs" value="logical document ownership" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=ERone;startFill=0;startSize=14;endArrow=ERzeroToMany;endFill=0;endSize=14;strokeColor=#6b7280;dashed=1;dashPattern=8 8;fontSize=12;fontColor=#4b5563;" edge="1" parent="1" source="externalUser" target="userDocs">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="600" y="205"/>
+              <mxPoint x="600" y="550"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="edgeUserConversation" value="logical conversation ownership" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=ERone;startFill=0;startSize=14;endArrow=ERzeroToMany;endFill=0;endSize=14;strokeColor=#6b7280;dashed=1;dashPattern=8 8;fontSize=12;fontColor=#4b5563;" edge="1" parent="1" source="externalUser" target="conversation">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edgeConversationMessages" value="contains / belongs to" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=ERone;startFill=0;startSize=14;endArrow=ERzeroToMany;endFill=0;endSize=14;strokeColor=#3f4a54;fontSize=12;fontColor=#1f2933;" edge="1" parent="1" source="conversation" target="message">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

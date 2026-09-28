@@ -1,0 +1,179 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1260" viewBox="0 0 1920 1260" role="img" aria-labelledby="title desc">
+  <title id="title">Savings Saga system architecture</title>
+  <desc id="desc">A layered Spring Boot architecture showing the client, security, APIs, services, PostgreSQL, scheduled jobs, Kafka events, consumers, email and Finance AI integrations.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5d6873"/>
+    </marker>
+    <style>
+      .canvas { fill: #ffffff; }
+      .boundary { fill: #f8fafc; stroke: #6b7c8f; stroke-width: 2; }
+      .group { fill: #ffffff; stroke: #9aa8b5; stroke-width: 1.5; }
+      .node { fill: #ffffff; stroke: #4d8990; stroke-width: 1.8; }
+      .external { fill: #ffffff; stroke: #637383; stroke-width: 1.8; }
+      .database { fill: #ffffff; stroke: #637383; stroke-width: 1.8; }
+      .title { font: 700 22px Arial, sans-serif; fill: #17212b; }
+      .group-title { font: 700 17px Arial, sans-serif; fill: #24313d; }
+      .node-title { font: 700 15px Arial, sans-serif; fill: #17212b; }
+      .body { font: 13px Arial, sans-serif; fill: #465563; }
+      .small { font: 12px Arial, sans-serif; fill: #465563; }
+      .edge { fill: none; stroke: #5d6873; stroke-width: 1.6; marker-end: url(#arrow); }
+      .edge-label { font: 700 12px Arial, sans-serif; fill: #2d6d75; }
+    </style>
+  </defs>
+
+  <rect class="canvas" width="1920" height="1260"/>
+  <text x="960" y="36" text-anchor="middle" class="title">Savings Saga - System Architecture</text>
+
+  <!-- Client -->
+  <rect x="760" y="65" width="400" height="72" rx="4" class="external"/>
+  <text x="960" y="94" text-anchor="middle" class="node-title">Client Application</text>
+  <text x="960" y="116" text-anchor="middle" class="body">Web / Mobile UI</text>
+  <path d="M960 137 V178" class="edge"/>
+  <text x="980" y="161" class="edge-label">HTTPS request</text>
+
+  <!-- Backend boundary -->
+  <rect x="45" y="178" width="1335" height="1025" rx="2" class="boundary"/>
+  <rect x="68" y="165" width="340" height="28" fill="#ffffff"/>
+  <text x="78" y="186" class="title">Savings Saga - Spring Boot Backend</text>
+
+  <!-- Security -->
+  <rect x="750" y="210" width="420" height="74" rx="4" class="node"/>
+  <text x="960" y="240" text-anchor="middle" class="node-title">Spring Security</text>
+  <text x="960" y="262" text-anchor="middle" class="body">JWT + HTTP-only Cookie</text>
+  <path d="M960 284 V322" class="edge"/>
+
+  <!-- API layer -->
+  <rect x="78" y="322" width="1270" height="150" rx="2" class="group"/>
+  <rect x="95" y="309" width="150" height="28" fill="#ffffff"/>
+  <text x="105" y="330" class="group-title">REST API Layer</text>
+
+  <rect x="105" y="368" width="175" height="58" rx="4" class="node"/>
+  <text x="192" y="402" text-anchor="middle" class="node-title">Auth API</text>
+  <rect x="305" y="368" width="175" height="58" rx="4" class="node"/>
+  <text x="392" y="402" text-anchor="middle" class="node-title">User Profile API</text>
+  <rect x="505" y="368" width="175" height="58" rx="4" class="node"/>
+  <text x="592" y="402" text-anchor="middle" class="node-title">Transaction API</text>
+  <rect x="705" y="368" width="175" height="58" rx="4" class="node"/>
+  <text x="792" y="402" text-anchor="middle" class="node-title">Bill &amp; Bill Instance API</text>
+  <rect x="905" y="368" width="175" height="58" rx="4" class="node"/>
+  <text x="992" y="402" text-anchor="middle" class="node-title">Analytics API</text>
+  <rect x="1105" y="368" width="215" height="58" rx="4" class="node"/>
+  <text x="1212" y="402" text-anchor="middle" class="node-title">Finance AI API</text>
+
+  <!-- Scheduled jobs -->
+  <rect x="78" y="510" width="255" height="190" rx="2" class="group"/>
+  <rect x="95" y="497" width="130" height="28" fill="#ffffff"/>
+  <text x="105" y="518" class="group-title">Scheduled Jobs</text>
+  <rect x="98" y="548" width="215" height="54" rx="4" class="node"/>
+  <text x="205" y="572" text-anchor="middle" class="node-title">Bill Recurrence Scheduler</text>
+  <text x="205" y="590" text-anchor="middle" class="small">Creates bill instances daily</text>
+  <rect x="98" y="620" width="215" height="54" rx="4" class="node"/>
+  <text x="205" y="644" text-anchor="middle" class="node-title">Bill Reminder Scheduler</text>
+  <text x="205" y="662" text-anchor="middle" class="small">Checks bills due in 3 days</text>
+
+  <!-- Service layer -->
+  <rect x="355" y="510" width="993" height="190" rx="2" class="group"/>
+  <rect x="372" y="497" width="200" height="28" fill="#ffffff"/>
+  <text x="382" y="518" class="group-title">Business Service Layer</text>
+
+  <rect x="378" y="568" width="165" height="62" rx="4" class="node"/>
+  <text x="460" y="593" text-anchor="middle" class="node-title">Authentication</text>
+  <text x="460" y="612" text-anchor="middle" class="node-title">Service</text>
+  <rect x="563" y="568" width="190" height="62" rx="4" class="node"/>
+  <text x="658" y="593" text-anchor="middle" class="node-title">Transaction &amp; Budget</text>
+  <text x="658" y="612" text-anchor="middle" class="node-title">Service</text>
+  <rect x="773" y="568" width="170" height="62" rx="4" class="node"/>
+  <text x="858" y="593" text-anchor="middle" class="node-title">Bill Management</text>
+  <text x="858" y="612" text-anchor="middle" class="node-title">Service</text>
+  <rect x="963" y="568" width="165" height="62" rx="4" class="node"/>
+  <text x="1045" y="602" text-anchor="middle" class="node-title">Analytics Service</text>
+  <rect x="1148" y="568" width="175" height="62" rx="4" class="node"/>
+  <text x="1235" y="602" text-anchor="middle" class="node-title">Finance AI Client</text>
+
+  <!-- API to services -->
+  <path d="M192 426 V470 H460 V568" class="edge"/>
+  <path d="M392 426 V452 H658 V568" class="edge"/>
+  <path d="M592 426 V440 H658 V568" class="edge"/>
+  <path d="M792 426 V470 H858 V568" class="edge"/>
+  <path d="M992 426 V470 H1045 V568" class="edge"/>
+  <path d="M1212 426 V470 H1235 V568" class="edge"/>
+  <path d="M313 575 H335 V599 H378" class="edge"/>
+
+  <!-- Event layer -->
+  <rect x="78" y="760" width="770" height="400" rx="2" class="group"/>
+  <rect x="95" y="747" width="240" height="28" fill="#ffffff"/>
+  <text x="105" y="768" class="group-title">Event-Driven Notification Layer</text>
+
+  <rect x="110" y="815" width="240" height="70" rx="4" class="node"/>
+  <text x="230" y="844" text-anchor="middle" class="node-title">Bill Reminder Event</text>
+  <text x="230" y="864" text-anchor="middle" class="small">Published for upcoming bills</text>
+  <rect x="410" y="815" width="300" height="70" rx="4" class="node"/>
+  <text x="560" y="844" text-anchor="middle" class="node-title">Monthly Summary Updated Event</text>
+  <text x="560" y="864" text-anchor="middle" class="small">Triggers budget-limit checks</text>
+  <rect x="290" y="940" width="345" height="62" rx="4" class="node"/>
+  <text x="462" y="968" text-anchor="middle" class="node-title">Apache Kafka</text>
+  <text x="462" y="988" text-anchor="middle" class="small">Event topics for asynchronous processing</text>
+  <rect x="170" y="1060" width="260" height="62" rx="4" class="node"/>
+  <text x="300" y="1087" text-anchor="middle" class="node-title">Budget Alert Event</text>
+  <text x="300" y="1107" text-anchor="middle" class="small">90% and 100% thresholds</text>
+
+  <path d="M205 674 V815" class="edge"/>
+  <text x="218" y="742" class="edge-label">publish</text>
+  <path d="M658 630 V740 H560 V815" class="edge"/>
+  <text x="580" y="730" class="edge-label">publish</text>
+  <path d="M230 885 V940 H375" class="edge"/>
+  <path d="M560 885 V940 H550" class="edge"/>
+
+  <!-- Consumers -->
+  <rect x="890" y="760" width="458" height="400" rx="2" class="group"/>
+  <rect x="907" y="747" width="150" height="28" fill="#ffffff"/>
+  <text x="917" y="768" class="group-title">Kafka Consumers</text>
+  <rect x="920" y="815" width="398" height="58" rx="4" class="node"/>
+  <text x="1119" y="840" text-anchor="middle" class="node-title">Monthly Summary Updated Consumer</text>
+  <text x="1119" y="858" text-anchor="middle" class="small">Evaluates needs and wants limits</text>
+  <rect x="920" y="905" width="398" height="58" rx="4" class="node"/>
+  <text x="1119" y="930" text-anchor="middle" class="node-title">Bill Reminder Consumer</text>
+  <text x="1119" y="948" text-anchor="middle" class="small">Processes upcoming-bill reminders</text>
+  <rect x="920" y="995" width="398" height="58" rx="4" class="node"/>
+  <text x="1119" y="1020" text-anchor="middle" class="node-title">Alert Notification Consumer</text>
+  <text x="1119" y="1038" text-anchor="middle" class="small">Processes budget-limit alerts</text>
+
+  <path d="M635 971 H745 V844 H920" class="edge"/>
+  <path d="M635 971 H780 V934 H920" class="edge"/>
+  <path d="M1119 873 V1060 H430" class="edge"/>
+  <text x="610" y="1052" class="edge-label">publish budget alert</text>
+  <path d="M430 1091 H745 V1024 H920" class="edge"/>
+
+  <!-- External systems -->
+  <path d="M460 630 V690 H1435 V725" class="edge"/>
+  <path d="M658 630 V720 H1435 V748" class="edge"/>
+  <path d="M858 630 V735 H1435 V775" class="edge"/>
+  <path d="M1045 630 V750 H1435 V803" class="edge"/>
+  <path d="M1235 630 H1435 V495" class="edge"/>
+
+  <rect x="1435" y="430" width="410" height="96" rx="4" class="external"/>
+  <text x="1640" y="466" text-anchor="middle" class="node-title">External Finance AI Service</text>
+  <text x="1640" y="488" text-anchor="middle" class="body">Chat and file-management integration</text>
+  <text x="1357" y="606" class="edge-label">REST API call</text>
+
+  <path d="M1318 934 H1540 V1082" class="edge"/>
+  <path d="M1318 1024 H1570 V1082" class="edge"/>
+  <rect x="1435" y="1082" width="410" height="74" rx="4" class="external"/>
+  <text x="1640" y="1112" text-anchor="middle" class="node-title">SMTP Email Service</text>
+  <text x="1640" y="1134" text-anchor="middle" class="body">Bill reminders and budget alerts</text>
+
+  <!-- Database cylinder -->
+  <ellipse cx="1640" cy="700" rx="205" ry="28" class="database"/>
+  <path d="M1435 700 V840 C1435 878 1845 878 1845 840 V700" class="database"/>
+  <path d="M1435 840 C1435 878 1845 878 1845 840" fill="none" stroke="#637383" stroke-width="1.8"/>
+  <text x="1640" y="754" text-anchor="middle" class="node-title">PostgreSQL Database</text>
+  <text x="1640" y="780" text-anchor="middle" class="body">Users, Transactions, Bills, Categories,</text>
+  <text x="1640" y="801" text-anchor="middle" class="body">Bill Instances, Monthly Summaries</text>
+
+  <!-- Legend -->
+  <line x1="80" y1="1230" x2="120" y2="1230" class="edge"/>
+  <text x="132" y="1235" class="small">Synchronous request or service call</text>
+  <line x1="450" y1="1230" x2="490" y2="1230" class="edge"/>
+  <text x="502" y="1235" class="small">Asynchronous Kafka event flow</text>
+</svg>

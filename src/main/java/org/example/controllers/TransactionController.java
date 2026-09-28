@@ -36,7 +36,7 @@ public class TransactionController {
     private final CategoryService categoryService;
 
     @PostMapping()
-    public ResponseEntity<APIResponse<Void>> saveTransaction(@Valid @RequestBody TransactionRequest transactionRequest){
+    public ResponseEntity<APIResponse<Void>> saveTransaction(@Valid @RequestBody TransactionRequest transactionRequest){ //@Valid returns MethodArgumentNotValid Exception if the parameters are invalid
         Transaction tr=transactionService.saveTransaction(transactionRequest);
         APIResponse<Void> apiResponse=new APIResponse();
         apiResponse.setSuccess(true);
