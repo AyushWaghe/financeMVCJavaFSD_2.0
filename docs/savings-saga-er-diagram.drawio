@@ -1,0 +1,61 @@
+<mxfile host="app.diagrams.net" agent="Codex">
+  <diagram id="savings-saga-erd" name="Savings Saga ER Diagram">
+    <mxGraphModel dx="1602" dy="897" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1260" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontColor=#17212b;fontSize=21;" value="&lt;b&gt;Savings Saga - Entity Relationship Diagram&lt;/b&gt;&lt;br&gt;PostgreSQL schema derived from JPA entity mappings" vertex="1">
+          <mxGeometry height="55" width="940" x="430" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="user" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#ffffff;strokeColor=#4d8990;fontColor=#17212b;fontSize=15;" value="&lt;b&gt;users&lt;/b&gt;&lt;hr&gt;&lt;b&gt;PK&lt;/b&gt; user_id : INTEGER&lt;br&gt;password : VARCHAR NOT NULL&lt;br&gt;user_email : VARCHAR&lt;br&gt;created_at : TIMESTAMP" vertex="1">
+          <mxGeometry height="210" width="350" x="720" y="105" as="geometry" />
+        </mxCell>
+        <mxCell id="userDetail" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#ffffff;strokeColor=#4d8990;fontColor=#17212b;fontSize=14;" value="&lt;b&gt;user_details&lt;/b&gt;&lt;hr&gt;&lt;b&gt;PK / FK&lt;/b&gt; user_id : INTEGER&lt;br&gt;name : VARCHAR&lt;br&gt;address : VARCHAR&lt;br&gt;needs : INTEGER&lt;br&gt;wants : INTEGER&lt;br&gt;savings : INTEGER&lt;br&gt;notification_subscribed : BOOLEAN&lt;br&gt;reasoning_credits : INTEGER&lt;br&gt;reasoning_credits_reset_at : TIMESTAMP" vertex="1">
+          <mxGeometry height="270" width="400" x="145" y="105" as="geometry" />
+        </mxCell>
+        <mxCell id="category" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#ffffff;strokeColor=#4d8990;fontColor=#17212b;fontSize=14;" value="&lt;b&gt;categories&lt;/b&gt;&lt;hr&gt;&lt;b&gt;PK&lt;/b&gt; category_id : INTEGER&lt;br&gt;&lt;b&gt;FK&lt;/b&gt; user_id : INTEGER&lt;br&gt;title : VARCHAR NOT NULL&lt;br&gt;&lt;b&gt;UQ&lt;/b&gt; (user_id, title)" vertex="1">
+          <mxGeometry height="185" width="400" x="145" y="505" as="geometry" />
+        </mxCell>
+        <mxCell id="transaction" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#ffffff;strokeColor=#4d8990;fontColor=#17212b;fontSize=14;" value="&lt;b&gt;transactions&lt;/b&gt;&lt;hr&gt;&lt;b&gt;PK&lt;/b&gt; transaction_id : INTEGER&lt;br&gt;&lt;b&gt;FK&lt;/b&gt; user_id : INTEGER NOT NULL&lt;br&gt;&lt;b&gt;FK&lt;/b&gt; category_id : INTEGER NULL&lt;br&gt;title : VARCHAR&lt;br&gt;description : VARCHAR&lt;br&gt;amount : DECIMAL(8,2) NOT NULL&lt;br&gt;transaction_date : DATE NOT NULL&lt;br&gt;transaction_type : VARCHAR NOT NULL&lt;br&gt;spending_type : VARCHAR NOT NULL&lt;br&gt;created_at : TIMESTAMP&lt;br&gt;updated_at : TIMESTAMP&lt;br&gt;&lt;b&gt;IDX&lt;/b&gt; (user_id, transaction_date)" vertex="1">
+          <mxGeometry height="330" width="400" x="650" y="445" as="geometry" />
+        </mxCell>
+        <mxCell id="bill" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#ffffff;strokeColor=#4d8990;fontColor=#17212b;fontSize=14;" value="&lt;b&gt;bills&lt;/b&gt;&lt;hr&gt;&lt;b&gt;PK&lt;/b&gt; bill_id : INTEGER&lt;br&gt;&lt;b&gt;FK&lt;/b&gt; user_id : INTEGER NOT NULL&lt;br&gt;title : VARCHAR NOT NULL&lt;br&gt;recurrence : VARCHAR NOT NULL&lt;br&gt;amount : DECIMAL(12,2) NOT NULL&lt;br&gt;due_date : DATE NOT NULL&lt;br&gt;created_at : TIMESTAMP&lt;br&gt;updated_at : TIMESTAMP" vertex="1">
+          <mxGeometry height="270" width="400" x="1170" y="445" as="geometry" />
+        </mxCell>
+        <mxCell id="monthlySummary" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#ffffff;strokeColor=#4d8990;fontColor=#17212b;fontSize=14;" value="&lt;b&gt;monthly_transaction_summary&lt;/b&gt;&lt;hr&gt;&lt;b&gt;PK&lt;/b&gt; id : INTEGER&lt;br&gt;&lt;b&gt;FK&lt;/b&gt; user_id : INTEGER NOT NULL&lt;br&gt;year : INTEGER NOT NULL&lt;br&gt;month : INTEGER NOT NULL&lt;br&gt;total_income : DECIMAL(19,2)&lt;br&gt;total_expense : DECIMAL(19,2)&lt;br&gt;total_need_expense : DECIMAL(19,2)&lt;br&gt;total_want_expense : DECIMAL(19,2)&lt;br&gt;total_savings : DECIMAL(19,2)&lt;br&gt;last_need_threshold_sent : INTEGER&lt;br&gt;last_want_threshold_sent : INTEGER&lt;br&gt;created_at : TIMESTAMP&lt;br&gt;updated_at : TIMESTAMP&lt;br&gt;&lt;b&gt;UQ&lt;/b&gt; (user_id, year, month)" vertex="1">
+          <mxGeometry height="350" width="500" x="600" y="835" as="geometry" />
+        </mxCell>
+        <mxCell id="billInstance" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#ffffff;strokeColor=#4d8990;fontColor=#17212b;fontSize=14;" value="&lt;b&gt;bill_instances&lt;/b&gt;&lt;hr&gt;&lt;b&gt;PK&lt;/b&gt; bill_instance_id : INTEGER&lt;br&gt;&lt;b&gt;FK&lt;/b&gt; user_id : INTEGER&lt;br&gt;title : VARCHAR NOT NULL&lt;br&gt;amount : DECIMAL NOT NULL&lt;br&gt;due_date : DATE NOT NULL&lt;br&gt;status : VARCHAR NOT NULL" vertex="1">
+          <mxGeometry height="220" width="400" x="1170" y="835" as="geometry" />
+        </mxCell>
+        <mxCell id="note" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=middle;spacing=10;fillColor=#fff9e6;strokeColor=#c7a34b;fontColor=#4a3b15;fontSize=13;" value="&lt;b&gt;Schema note&lt;/b&gt;&lt;br&gt;BillInstance is created and managed through application service logic, but the current schema does not map a bill_id foreign key. Therefore, no direct Bill-to-BillInstance database relationship is shown." vertex="1">
+          <mxGeometry height="95" width="400" x="1170" y="1090" as="geometry" />
+        </mxCell>
+        <mxCell id="legend" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=middle;spacing=10;fillColor=#f8fafc;strokeColor=#9aa8b5;fontColor=#465563;fontSize=13;" value="&lt;b&gt;Legend&lt;/b&gt;&lt;br&gt;PK = Primary Key &amp;nbsp; | &amp;nbsp; FK = Foreign Key &amp;nbsp; | &amp;nbsp; UQ = Unique Constraint &amp;nbsp; | &amp;nbsp; IDX = Index&lt;br&gt;Cardinality labels: 1 = one record, 0..* = zero or more records" vertex="1">
+          <mxGeometry height="130" width="365" x="145" y="835" as="geometry" />
+        </mxCell>
+        <mxCell id="eUserDetail" edge="1" parent="1" source="userDetail" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#5d6873;fontColor=#2d6d75;fontSize=12;labelBackgroundColor=#ffffff;" target="user" value="1 : 1 (shared primary key)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eUserCategory" edge="1" parent="1" source="user" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#5d6873;fontColor=#2d6d75;fontSize=12;labelBackgroundColor=#ffffff;" target="category" value="1 : 0..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eUserTransaction" edge="1" parent="1" source="user" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#5d6873;fontColor=#2d6d75;fontSize=12;labelBackgroundColor=#ffffff;" target="transaction" value="1 : 0..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eCategoryTransaction" edge="1" parent="1" source="category" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#5d6873;fontColor=#2d6d75;fontSize=12;labelBackgroundColor=#ffffff;" target="transaction" value="1 : 0..* (optional on transaction)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eUserBill" edge="1" parent="1" source="user" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#5d6873;fontColor=#2d6d75;fontSize=12;labelBackgroundColor=#ffffff;" target="bill" value="1 : 0..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eUserSummary" edge="1" parent="1" source="user" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#5d6873;fontColor=#2d6d75;fontSize=12;labelBackgroundColor=#ffffff;" target="monthlySummary" value="1 : 0..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="eUserBillInstance" edge="1" parent="1" source="user" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=none;startArrow=none;strokeColor=#5d6873;fontColor=#2d6d75;fontSize=12;labelBackgroundColor=#ffffff;" target="billInstance" value="1 : 0..*">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

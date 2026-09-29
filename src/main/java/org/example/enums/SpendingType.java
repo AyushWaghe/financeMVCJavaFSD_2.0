@@ -3,5 +3,6 @@ package org.example.enums;
 public enum SpendingType {
     NEEDS,
     WANTS,
-    SAVINGS
+    SAVINGS,
+    NA
 }

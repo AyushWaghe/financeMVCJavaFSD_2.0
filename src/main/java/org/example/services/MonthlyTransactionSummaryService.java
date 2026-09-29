@@ -10,6 +10,7 @@ import org.example.models.MonthlyTransactionSummary;
 import org.example.models.Transaction;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -22,6 +23,7 @@ public class MonthlyTransactionSummaryService {
     private final KafkaTemplate<String, MonthlySummaryUpdatedEvent> kafkaTemplate;
 
 
+    @Transactional
     public void updateMonthlySummaryOnTransactionCreate(Transaction transaction) {
 
         int year = transaction.getTransactionDate().getYear();
@@ -43,7 +45,7 @@ public class MonthlyTransactionSummaryService {
 
         updateMonthlySummaryDelta(transaction,month,year,amount,userId);
 
-        if(year==LocalDate.now().getYear() && month==LocalDate.now().getMonthValue()){
+        if(year==LocalDate.now().getYear() && month==LocalDate.now().getMonthValue()){ //Compare with current date only since notification we are sending for the current ongoing month only. Hence, we need to focus on current changes of transactions in the ongoing month
             MonthlySummaryUpdatedEvent monthlySummaryUpdatedEvent=new MonthlySummaryUpdatedEvent(userId);
             kafkaTemplate.send(
                     "monthly-summary-updated-topic",
@@ -54,6 +56,7 @@ public class MonthlyTransactionSummaryService {
 
     }
 
+    @Transactional
     public void updateMonthlySummaryOnTransactionUpdate(Transaction oldTransaction,Transaction newTransaction) {
 
         int oldYear = oldTransaction.getTransactionDate().getYear();
@@ -63,7 +66,6 @@ public class MonthlyTransactionSummaryService {
         Integer userId = oldTransaction.getUser().getUserId();
         BigDecimal oldAmount = oldTransaction.getAmount().negate();
         BigDecimal newAmount = newTransaction.getAmount();
-        System.out.println("Old year is"+oldYear);
 
         if(newYear!=oldYear || newMonth!=oldMonth){ //Transaction date updated hence monthly entries to be updated
 
@@ -121,6 +123,7 @@ public class MonthlyTransactionSummaryService {
         }
     }
 
+    @Transactional
     public void updateMonthlySummaryOnTransactionDelete(Transaction transaction) {
         int year = transaction.getTransactionDate().getYear();
         int month = transaction.getTransactionDate().getMonthValue();
@@ -158,11 +161,9 @@ public class MonthlyTransactionSummaryService {
                 );
 
                 case SAVINGS ->{
-                    System.out.println("When in savings");
                     monthlyTransactionSummaryRepository.updateSavingsExpense(
                             userId, year, month, changeAmount
                     );
-                    System.out.println("Reached here");
                 }
             }
         }

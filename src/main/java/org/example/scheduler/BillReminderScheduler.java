@@ -6,6 +6,7 @@ import org.example.services.BillService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+
 @Component
 @RequiredArgsConstructor
 public class BillReminderScheduler {
@@ -13,7 +14,7 @@ public class BillReminderScheduler {
     private final BillInstanceService billInstanceService;
 
     @Scheduled(cron = "0 0 0 * * *")
-//    @Scheduled(fixedRate = 5000) // every 5000 ms = 5 seconds
+//    @Scheduled(cron = "0 * * * * *")
     public void processDueBills(){
         System.out.println("running shceduler");
         billInstanceService.processDueBills();

@@ -25,10 +25,6 @@ public class BillInstance {
     private Integer billInstanceId;
 
     @ManyToOne
-    @JoinColumn(name = "bill_id",referencedColumnName = "bill_id")
-    private Bill bill;
-
-    @ManyToOne
     @JoinColumn(name = "user_id",referencedColumnName = "user_id")
     private User user;
 

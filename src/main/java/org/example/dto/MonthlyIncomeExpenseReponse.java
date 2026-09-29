@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class MonthlyIncomeExpenseReponse {
     @NotNull
-    String month;
+    Integer month;
 
     @NotNull
     BigDecimal income=BigDecimal.ZERO;

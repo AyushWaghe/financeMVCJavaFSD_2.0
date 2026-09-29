@@ -21,6 +21,9 @@ import java.time.LocalDate;
 public class BillInstanceResponse {
 
     @NotBlank
+    private Integer id;
+
+    @NotBlank
     private String title;
 
     @NotNull

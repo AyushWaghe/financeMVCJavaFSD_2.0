@@ -1,11 +1,11 @@
 package org.example.services;
 
 import lombok.RequiredArgsConstructor;
+import org.example.dao.UserRepository;
 import org.example.dto.AuthRequest;
 import org.example.dto.AuthResponse;
-import org.example.models.User;
+import org.example.dto.AuthResult;
 import org.example.security.JwtService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,32 +14,35 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-@RequiredArgsConstructor //This handles all the constructer initializations. Like below jwt service for final variables
+@RequiredArgsConstructor //This handles all the constructor initializations. Like below jwt service for final variables
 public class AuthService {  //Login
 
-    @Autowired
-    AuthenticationManager  authenticationManager;
-
-    @Autowired
+    private final AuthenticationManager  authenticationManager;
     private final JwtService jwtService;
+    private final UserRepository userRepository;
 
-    public AuthResponse loginUser(AuthRequest authRequest) {
+    public AuthResult loginUser(AuthRequest authRequest) {
         try {
-            Authentication authentication=authenticationManager.authenticate( //This calls load by username internally
+            Authentication authentication = authenticationManager.authenticate( //If crednetials wrong then this will throw bad crednetials exception
                     new UsernamePasswordAuthenticationToken(
                             authRequest.getUseremail(),
                             authRequest.getPassword()
                     )
             );
-            //If in-case the authentication fails then in that case the above authentication will throw error.
 
-            User user=(User) authentication.getPrincipal();
+            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+            String token = jwtService.generateAccessToken(customUserDetails);
 
-            String token=jwtService.generateAccessToken(user);
+            return new AuthResult(new AuthResponse(
+                    true,
+                    customUserDetails.getUserId(),
+                    customUserDetails.getUsername(),
+                    "Login successful"
+            ),token);
 
-            return new AuthResponse(true, user.getUserId(),user.getUseremail(), "Login successful",token);
+
         }catch (BadCredentialsException e){
-            return new AuthResponse(false,null,"","Login Unsuccessful","");
+            return new AuthResult(new AuthResponse(false,null,null,"Login unsuccessful"),null);
         }
     }
 }

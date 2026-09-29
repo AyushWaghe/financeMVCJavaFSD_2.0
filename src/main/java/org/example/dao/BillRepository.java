@@ -2,17 +2,21 @@ package org.example.dao;
 
 import jakarta.transaction.Transactional;
 import org.example.models.Bill;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
 public interface BillRepository extends JpaRepository<Bill, Integer> {
 
-    List<Bill> findByUserUserId(Integer userId);
+    Page<Bill> findByUserUserId(Integer userId, Pageable pageable);
 
     @Modifying
     //Here we tell spring that this is delete query something that modifies the DB since by default all queries are read queries in spring
@@ -23,4 +27,12 @@ public interface BillRepository extends JpaRepository<Bill, Integer> {
      */
     @Query("DELETE FROM Bill b WHERE b.id= :id")
     int deleteBillById(Integer id);
+
+    @Query("""
+        SELECT b
+        FROM Bill b
+        WHERE b.billRecurrence <> 'NONE'
+        AND b.latestDueDate <= :today
+    """)
+    List<Bill> findBillsToGenerate(@Param("today") LocalDate today);
 }

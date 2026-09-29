@@ -1,0 +1,97 @@
+<mxfile host="app.diagrams.net" agent="Codex">
+  <diagram id="savings-saga-erd-crowfoot" name="Savings Saga ERD - Crow&#39;s Foot">
+    <mxGraphModel dx="1373" dy="769" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontColor=#1f2933;fontSize=20;" value="&lt;b&gt;Savings Saga - Entity Relationship Diagram&lt;/b&gt;&lt;br&gt;Crow&#39;s-foot notation based on the current JPA mappings" vertex="1">
+          <mxGeometry height="55" width="860" x="470" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="users" parent="1" style="swimlane;html=1;horizontal=1;startSize=30;rounded=0;fillColor=#ffffff;swimlaneFillColor=#e5e7eb;strokeColor=#3f4a54;separatorColor=#3f4a54;fontColor=#1f2933;fontSize=14;align=left;verticalAlign=top;spacingLeft=10;spacingTop=7;" value="&lt;b&gt;users&lt;/b&gt;&lt;hr&gt;&lt;b&gt;PK&lt;/b&gt;  user_id : INTEGER&lt;br&gt;password : VARCHAR NOT NULL&lt;br&gt;user_email : VARCHAR&lt;br&gt;created_at : TIMESTAMP" vertex="1">
+          <mxGeometry height="165" width="350" x="740" y="105" as="geometry" />
+        </mxCell>
+        <mxCell id="userDetails" parent="1" style="swimlane;html=1;horizontal=1;startSize=30;rounded=0;fillColor=#ffffff;swimlaneFillColor=#e5e7eb;strokeColor=#3f4a54;separatorColor=#3f4a54;fontColor=#1f2933;fontSize=13;align=left;verticalAlign=top;spacingLeft=10;spacingTop=7;" value="&lt;b&gt;user_details&lt;/b&gt;&lt;hr&gt;&lt;b&gt;PK / FK&lt;/b&gt;  user_id : INTEGER&lt;br&gt;name : VARCHAR&lt;br&gt;address : VARCHAR&lt;br&gt;needs : INTEGER&lt;br&gt;wants : INTEGER&lt;br&gt;savings : INTEGER&lt;br&gt;notification_subscribed : BOOLEAN&lt;br&gt;reasoning_credits : INTEGER&lt;br&gt;reasoning_credits_reset_at : TIMESTAMP" vertex="1">
+          <mxGeometry height="260" width="420" x="30" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="categories" parent="1" style="swimlane;html=1;horizontal=1;startSize=30;rounded=0;fillColor=#ffffff;swimlaneFillColor=#e5e7eb;strokeColor=#3f4a54;separatorColor=#3f4a54;fontColor=#1f2933;fontSize=13;align=left;verticalAlign=top;spacingLeft=10;spacingTop=7;" value="&lt;b&gt;categories&lt;/b&gt;&lt;hr&gt;&lt;b&gt;PK&lt;/b&gt;  category_id : INTEGER&lt;br&gt;&lt;b&gt;FK&lt;/b&gt;  user_id : INTEGER&lt;br&gt;title : VARCHAR NOT NULL&lt;br&gt;&lt;b&gt;UQ&lt;/b&gt;  (user_id, title)" vertex="1">
+          <mxGeometry height="170" width="420" x="30" y="670" as="geometry" />
+        </mxCell>
+        <mxCell id="transactions" parent="1" style="swimlane;html=1;horizontal=1;startSize=30;rounded=0;fillColor=#ffffff;swimlaneFillColor=#e5e7eb;strokeColor=#3f4a54;separatorColor=#3f4a54;fontColor=#1f2933;fontSize=13;align=left;verticalAlign=top;spacingLeft=10;spacingTop=7;" value="&lt;b&gt;transactions&lt;/b&gt;&lt;hr&gt;&lt;b&gt;PK&lt;/b&gt;  transaction_id : INTEGER&lt;br&gt;&lt;b&gt;FK&lt;/b&gt;  user_id : INTEGER NOT NULL&lt;br&gt;&lt;b&gt;FK&lt;/b&gt;  category_id : INTEGER NULL&lt;br&gt;title : VARCHAR&lt;br&gt;description : VARCHAR&lt;br&gt;amount : DECIMAL(8,2) NOT NULL&lt;br&gt;transaction_date : DATE NOT NULL&lt;br&gt;transaction_type : VARCHAR NOT NULL&lt;br&gt;spending_type : VARCHAR NOT NULL&lt;br&gt;created_at : TIMESTAMP&lt;br&gt;updated_at : TIMESTAMP&lt;br&gt;&lt;b&gt;IDX&lt;/b&gt;  (user_id, transaction_date)" vertex="1">
+          <mxGeometry height="315" width="420" x="690" y="443" as="geometry" />
+        </mxCell>
+        <mxCell id="bills" parent="1" style="swimlane;html=1;horizontal=1;startSize=30;rounded=0;fillColor=#ffffff;swimlaneFillColor=#e5e7eb;strokeColor=#3f4a54;separatorColor=#3f4a54;fontColor=#1f2933;fontSize=13;align=left;verticalAlign=top;spacingLeft=10;spacingTop=7;" value="&lt;b&gt;bills&lt;/b&gt;&lt;hr&gt;&lt;b&gt;PK&lt;/b&gt;  bill_id : INTEGER&lt;br&gt;&lt;b&gt;FK&lt;/b&gt;  user_id : INTEGER NOT NULL&lt;br&gt;title : VARCHAR NOT NULL&lt;br&gt;recurrence : VARCHAR NOT NULL&lt;br&gt;amount : DECIMAL(12,2) NOT NULL&lt;br&gt;due_date : DATE NOT NULL&lt;br&gt;created_at : TIMESTAMP&lt;br&gt;updated_at : TIMESTAMP" vertex="1">
+          <mxGeometry height="250" width="420" x="1200" y="75" as="geometry" />
+        </mxCell>
+        <mxCell id="monthlySummary" parent="1" style="swimlane;html=1;horizontal=1;startSize=30;rounded=0;fillColor=#ffffff;swimlaneFillColor=#e5e7eb;strokeColor=#3f4a54;separatorColor=#3f4a54;fontColor=#1f2933;fontSize=13;align=left;verticalAlign=top;spacingLeft=10;spacingTop=7;" value="&lt;b&gt;monthly_transaction_summary&lt;/b&gt;&lt;hr&gt;&lt;b&gt;PK&lt;/b&gt;  id : INTEGER&lt;br&gt;&lt;b&gt;FK&lt;/b&gt;  user_id : INTEGER NOT NULL&lt;br&gt;year : INTEGER NOT NULL&lt;br&gt;month : INTEGER NOT NULL&lt;br&gt;total_income : DECIMAL(19,2)&lt;br&gt;total_expense : DECIMAL(19,2)&lt;br&gt;total_need_expense : DECIMAL(19,2)&lt;br&gt;total_want_expense : DECIMAL(19,2)&lt;br&gt;total_savings : DECIMAL(19,2)&lt;br&gt;last_need_threshold_sent : INTEGER&lt;br&gt;last_want_threshold_sent : INTEGER&lt;br&gt;created_at : TIMESTAMP&lt;br&gt;updated_at : TIMESTAMP&lt;br&gt;&lt;b&gt;UQ&lt;/b&gt;  (user_id, year, month)" vertex="1">
+          <mxGeometry height="330" width="530" x="30" y="325" as="geometry" />
+        </mxCell>
+        <mxCell id="billInstances" parent="1" style="swimlane;html=1;horizontal=1;startSize=30;rounded=0;fillColor=#ffffff;swimlaneFillColor=#e5e7eb;strokeColor=#3f4a54;separatorColor=#3f4a54;fontColor=#1f2933;fontSize=13;align=left;verticalAlign=top;spacingLeft=10;spacingTop=7;" value="&lt;b&gt;bill_instances&lt;/b&gt;&lt;hr&gt;&lt;b&gt;PK&lt;/b&gt;  bill_instance_id : INTEGER&lt;br&gt;&lt;b&gt;FK&lt;/b&gt;  user_id : INTEGER&lt;br&gt;title : VARCHAR NOT NULL&lt;br&gt;amount : DECIMAL NOT NULL&lt;br&gt;due_date : DATE NOT NULL&lt;br&gt;status : VARCHAR NOT NULL" vertex="1">
+          <mxGeometry height="200" width="420" x="1200" y="470" as="geometry" />
+        </mxCell>
+        <mxCell id="legend" parent="1" style="rounded=1;whiteSpace=wrap;html=1;align=left;verticalAlign=middle;spacing=10;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=13;" value="&lt;b&gt;Legend&lt;/b&gt;&lt;br&gt;PK = Primary Key &amp;nbsp;|&amp;nbsp; FK = Foreign Key &amp;nbsp;|&amp;nbsp; UQ = Unique Constraint &amp;nbsp;|&amp;nbsp; IDX = Index&lt;br&gt;Crow&#39;s-foot markers show one, zero-or-one, and zero-or-many cardinalities." vertex="1">
+          <mxGeometry height="115" width="385" x="105" y="900" as="geometry" />
+        </mxCell>
+        <mxCell id="edgeUserDetails" edge="1" parent="1" source="users" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=ERone;startFill=0;startSize=14;endArrow=ERzeroToOne;endFill=0;endSize=14;strokeColor=#3f4a54;" target="userDetails">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="640" y="178" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edgeUserCategory" edge="1" parent="1" source="users" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=ERone;startFill=0;startSize=14;endArrow=ERzeroToMany;endFill=0;endSize=14;strokeColor=#3f4a54;" target="categories">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="810" y="410" />
+              <mxPoint x="660" y="410" />
+              <mxPoint x="660" y="755" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edgeUserTransactions" edge="1" parent="1" source="users" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=ERone;startFill=0;startSize=14;endArrow=ERzeroToMany;endFill=0;endSize=14;strokeColor=#3f4a54;" target="transactions">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="910" y="350" />
+              <mxPoint x="910" y="350" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edgeUserBills" edge="1" parent="1" source="users" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=ERone;startFill=0;startSize=14;endArrow=ERzeroToMany;endFill=0;endSize=14;strokeColor=#3f4a54;" target="bills">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1310" y="200" />
+              <mxPoint x="1310" y="200" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edgeUserSummary" edge="1" parent="1" source="users" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=ERone;startFill=0;startSize=14;endArrow=ERzeroToMany;endFill=0;endSize=14;strokeColor=#3f4a54;" target="monthlySummary">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="720" y="220" />
+              <mxPoint x="720" y="365" />
+              <mxPoint x="620" y="365" />
+              <mxPoint x="620" y="480" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edgeUserBillInstances" edge="1" parent="1" source="users" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=ERone;startFill=0;startSize=14;endArrow=ERzeroToMany;endFill=0;endSize=14;strokeColor=#3f4a54;" target="billInstances">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="990" y="410" />
+              <mxPoint x="1400" y="410" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="9Y6upsMSj-pGTkEQi7ha-2" edge="1" parent="1" source="categories" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=ERone;startFill=0;startSize=14;endArrow=ERzeroToMany;endFill=0;endSize=14;strokeColor=#3f4a54;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="transactions">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="240" y="870" />
+              <mxPoint x="900" y="870" />
+            </Array>
+            <mxPoint x="620" y="790" as="sourcePoint" />
+            <mxPoint x="620" y="963" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

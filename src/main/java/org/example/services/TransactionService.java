@@ -1,6 +1,5 @@
 package org.example.services;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.dao.CategoryRepository;
 import org.example.dao.MonthlyTransactionSummaryRepository;
@@ -14,7 +13,11 @@ import org.example.exceptions.UserDetailNotFoundException;
 import org.example.models.Category;
 import org.example.models.Transaction;
 import org.example.models.User;
+import org.example.utils.AuthenticationUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,13 +33,23 @@ public class TransactionService {
     private final CategoryService categoryService;
     private final MonthlyTransactionSummaryService monthlyTransactionSummaryService;
 
+
     @Transactional
     public Transaction saveTransaction(TransactionRequest transactionRequest){
+        Integer userId= AuthenticationUtil.getCurrentUserId();
+        User user = userRepository.getReferenceById(userId);
 
-        User user = userRepository.findById(transactionRequest.getUserId())
-                .orElseThrow(() -> new UserDetailNotFoundException("User with id "+transactionRequest.getUserId()+" not found"));
-
-        Category category=categoryService.findOrCreateCategory(user,transactionRequest.getCategory());
+        List<Category> userCategories=categoryService.getCategories(userId);
+        Category category=null;
+        for(Category c:userCategories){
+            if(transactionRequest.getCategory().equals(c.getTitle())){
+                category=c;
+                break;
+            }
+        }
+        if(category==null) {    //User category not found create one
+            category=categoryService.createCategory(userId,transactionRequest.getCategory());
+        }
 
         Transaction transaction= Transaction.builder()
                 .user(user)
@@ -57,29 +70,25 @@ public class TransactionService {
 
     }
 
+    @Transactional(readOnly = true)
     public List<TransactionResponse> getTransactions(Integer userId, LocalDate startDate,LocalDate endDate) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserDetailNotFoundException("User with id "+userId+" not found"));
 
         if(startDate!=null && endDate!=null && startDate.isAfter(endDate)){
             throw new IllegalArgumentException("Start date cannot be after end date.");
         }
 
         LocalDate today=LocalDate.now();
-        LocalDateTime startDateTime,endDateTime;
-        if(startDate==null){
-            startDateTime=today.withDayOfMonth(1).atStartOfDay();
-        }else{
-            startDateTime=startDate.atStartOfDay();
-        }
-        if(endDate==null){
-            endDateTime=today.atTime(23,59,59);
-        }else {
-            endDateTime=endDate.atTime(23,59,59);
+        if (startDate == null) {
+            startDate = today.withDayOfMonth(1);
         }
 
-        List<Transaction> transactions=transactionRepository.findByUser_UserIdAndTransactionDateBetween(user.getUserId(),startDateTime,endDateTime);
+        if (endDate == null) {
+            endDate = today;
+        }
+
+        List<Transaction> transactions=transactionRepository.findByUser_UserIdAndTransactionDateBetween(userId,startDate,endDate);
         List<TransactionResponse> transactionList=transactions.stream().map(t-> new TransactionResponse(
+                t.getId(),
                 t.getTitle(),
                 t.getDescription(),
                 t.getAmount(),
@@ -94,14 +103,42 @@ public class TransactionService {
 
     }
 
+    @Transactional(readOnly = true)
+    public Page<TransactionResponse> getTransactionsMonthly(Integer userId, Integer month, Integer year, Pageable pageable) {
+
+        Page<Transaction> transactions=transactionRepository.getTransactionsByUserMonthAndYear(userId,month,year,pageable);
+        return transactions.map(t -> new TransactionResponse( //Did not use .stream here since page gives map method internally to us hence directly used that
+                t.getId(),
+                t.getTitle(),
+                t.getDescription(),
+                t.getAmount(),
+                t.getCategory().getTitle(),
+                t.getTransactionDate(),
+                t.getType(),
+                t.getSpendingType()
+        ));
+    }
+
+    @Transactional
     public void updateTransaction(TransactionRequest transactionRequest, Integer id) {
-        Transaction transaction=transactionRepository.findById(id).orElseThrow(()->new TransactionNotFoundException("User with id "+transactionRequest.getUserId()+" not found"));
+        Integer userId= AuthenticationUtil.getCurrentUserId();
+        Transaction transaction=transactionRepository.findById(id).orElseThrow(()->new TransactionNotFoundException("User with id "+userId+" not found"));
         Transaction oldTransaction=new Transaction(transaction);
-        if(!transaction.getUser().getUserId().equals(transactionRequest.getUserId())){
-            throw new IllegalArgumentException("User id from transaction "+transaction.getUser().getUserId()+" and transaction request "+transactionRequest.getUserId()+ " did not match");
+        if(!transaction.getUser().getUserId().equals(userId)){
+            throw new IllegalArgumentException("User id from transaction "+transaction.getUser().getUserId()+" and transaction request "+userId+ " did not match");
         }
 
-        Category category=categoryService.findOrCreateCategory(transaction.getUser(),transactionRequest.getCategory());
+        List<Category> userCategories=categoryService.getCategories(transaction.getUser().getUserId());
+        Category category=null;
+        for(Category c:userCategories){
+            if(transactionRequest.getCategory().equals(c.getTitle())){
+                category=c;
+                break;
+            }
+        }
+        if(category==null) {    //User category not found create one
+            category=categoryService.createCategory(userId,transactionRequest.getCategory());
+        }
 
         transaction.setTitle(transactionRequest.getTitle());
         transaction.setDescription(transactionRequest.getDescription());
@@ -116,7 +153,7 @@ public class TransactionService {
         monthlyTransactionSummaryService.updateMonthlySummaryOnTransactionUpdate(oldTransaction,updatedTransaction);
     }
 
-//    @Transactional
+    @Transactional
     public void deleteTransaction(Integer tId) {
 
         Transaction transaction = transactionRepository.findById(tId)

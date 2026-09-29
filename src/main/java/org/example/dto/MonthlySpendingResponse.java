@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 public class MonthlySpendingResponse {
 
     @NotNull
-    String month;
+    Integer month;
 
     @NotNull
     BigDecimal spendings;

@@ -10,8 +10,10 @@ import org.example.exceptions.UserDetailNotFoundException;
 import org.example.models.MonthlyTransactionSummary;
 import org.example.models.User;
 import org.example.models.UserDetail;
+import org.example.services.UserService;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -26,16 +28,17 @@ public class MonthlySummaryUpdatedConsumer {
     private final MonthlyTransactionSummaryRepository monthlyTransactionSummaryRepository;
     private final UserDetailsRepository userDetailsRepository;
     private final KafkaTemplate<String, AlertNotificationEvent> kafkaTemplate;
+    private final UserService userService;
 
     @KafkaListener(
             topics = "monthly-summary-updated-topic",
             groupId = "monthly-summary-updated-group"
     )
     public void monthlySummaryUpdated(MonthlySummaryUpdatedEvent monthlySummaryUpdatedEvent){
-        System.out.println("Recieved monthly summary updated event");
 
         Integer userId=monthlySummaryUpdatedEvent.userId();
-        UserDetail userDetail=userDetailsRepository.findById(userId).orElseThrow(() -> new UserDetailNotFoundException("No user details found for user id"+userId));
+        UserDetail userDetail=userService.getUserDetails(userId);
+        String userEmail=userDetail.getUsername();
 
         if(!userDetail.isNotificationSubscribed()) return;  //User has not subscribed to receive notification
 
@@ -53,7 +56,6 @@ public class MonthlySummaryUpdatedConsumer {
         BigDecimal totalWantsExpense=monthlyTransactionSummary.getTotalWantExpense();
         Integer needsLimit=userDetail.getNeeds();
         Integer wantsLimit=userDetail.getWants();
-        Integer savings=userDetail.getSavings();
 
         BigDecimal needPercentage = BigDecimal.ZERO;
         BigDecimal wantPercentage = BigDecimal.ZERO;
@@ -78,7 +80,7 @@ public class MonthlySummaryUpdatedConsumer {
                 monthlyTransactionSummary.setLastNeedThresholdSent(100);
                 monthlyTransactionSummaryRepository.save(monthlyTransactionSummary);
                 // Publish NEED 100% notification event
-                AlertNotificationEvent alertNotificationEvent=new AlertNotificationEvent(userId,month,year,needPercentage,wantPercentage);
+                AlertNotificationEvent alertNotificationEvent=new AlertNotificationEvent(userId,month,year,needPercentage,wantPercentage,userEmail);
                 kafkaTemplate.send(
                         "alert-notification-topic",
                         userId.toString(),
@@ -91,7 +93,7 @@ public class MonthlySummaryUpdatedConsumer {
                 monthlyTransactionSummary.setLastNeedThresholdSent(90);
                 monthlyTransactionSummaryRepository.save(monthlyTransactionSummary);
                 // Publish NEED 90% notification event
-                AlertNotificationEvent alertNotificationEvent=new AlertNotificationEvent(userId,month,year,needPercentage,wantPercentage);
+                AlertNotificationEvent alertNotificationEvent=new AlertNotificationEvent(userId,month,year,needPercentage,wantPercentage,userEmail);
                 kafkaTemplate.send(
                         "alert-notification-topic",
                         userId.toString(),
@@ -112,7 +114,7 @@ public class MonthlySummaryUpdatedConsumer {
                 monthlyTransactionSummary.setLastWantThresholdSent(100);
                 monthlyTransactionSummaryRepository.save(monthlyTransactionSummary);
                 // Publish WANT 100% notification event
-                AlertNotificationEvent alertNotificationEvent=new AlertNotificationEvent(userId,month,year,needPercentage,wantPercentage);
+                AlertNotificationEvent alertNotificationEvent=new AlertNotificationEvent(userId,month,year,needPercentage,wantPercentage,userEmail);
                 kafkaTemplate.send(
                         "alert-notification-topic",
                         userId.toString(),
@@ -124,7 +126,7 @@ public class MonthlySummaryUpdatedConsumer {
                 monthlyTransactionSummary.setLastWantThresholdSent(90);
                 monthlyTransactionSummaryRepository.save(monthlyTransactionSummary);
                 // Publish WANT 90% notification event
-                AlertNotificationEvent alertNotificationEvent=new AlertNotificationEvent(userId,month,year,needPercentage,wantPercentage);
+                AlertNotificationEvent alertNotificationEvent=new AlertNotificationEvent(userId,month,year,needPercentage,wantPercentage,userEmail);
                 kafkaTemplate.send(
                         "alert-notification-topic",
                         userId.toString(),
@@ -138,5 +140,7 @@ public class MonthlySummaryUpdatedConsumer {
                 monthlyTransactionSummaryRepository.save(monthlyTransactionSummary);
             }
         }
+
+        System.out.println("kakfa processed");
     }
 }

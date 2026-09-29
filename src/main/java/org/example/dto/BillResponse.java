@@ -17,6 +17,9 @@ import java.time.LocalDate;
 public class BillResponse {
 
     @NotBlank
+    private Integer billId;
+
+    @NotBlank
     private String title;
 
     @NotNull
@@ -27,6 +30,4 @@ public class BillResponse {
 
     @NotNull
     private BillRecurrence billRecurrence;
-
-    private BillStatus billStatus;
 }

@@ -2,9 +2,12 @@ package org.example.dao;
 
 import jakarta.transaction.Transactional;
 import org.example.models.Transaction;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -17,7 +20,7 @@ public interface TransactionRepository extends JpaRepository<Transaction,Integer
     @Query("""
             SELECT t FROM Transaction t JOIN FETCH t.category WHERE t.user.userId = :userId AND t.transactionDate BETWEEN :startDate AND :endDate
             """)
-    List<Transaction> findByUser_UserIdAndTransactionDateBetween(Integer userId, LocalDateTime startDate, LocalDateTime endDate);
+    List<Transaction> findByUser_UserIdAndTransactionDateBetween(Integer userId, LocalDate startDate, LocalDate endDate);
 
     List<Transaction> findByUser_UserId(Integer userId);
 
@@ -29,4 +32,19 @@ public interface TransactionRepository extends JpaRepository<Transaction,Integer
      */
     @Query("DELETE FROM Transaction t WHERE t.id= :id")
     int deleteTransactionById(Integer id);
+
+    @Query("""
+    SELECT t
+    FROM Transaction t
+    WHERE t.user.userId = :userId
+      AND MONTH(t.transactionDate) = :month
+      AND YEAR(t.transactionDate) = :year
+    ORDER BY t.transactionDate DESC
+""")
+    Page<Transaction> getTransactionsByUserMonthAndYear(
+            @Param("userId") Integer userId,
+            @Param("month") Integer month,
+            @Param("year") Integer year,
+            Pageable pageable
+    );
 }

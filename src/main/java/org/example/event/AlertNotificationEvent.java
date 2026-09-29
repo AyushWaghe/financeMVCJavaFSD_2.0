@@ -7,5 +7,6 @@ public record AlertNotificationEvent(
         Integer month,
         Integer year,
         BigDecimal needsPercentage,
-        BigDecimal wantsPercentage
+        BigDecimal wantsPercentage,
+        String userEmail
 ) {}

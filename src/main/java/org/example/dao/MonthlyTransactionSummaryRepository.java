@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -19,6 +20,8 @@ public interface MonthlyTransactionSummaryRepository extends JpaRepository<Month
             Integer year,
             Integer month
     );
+
+
 
     @Modifying
     @Transactional
@@ -85,5 +88,42 @@ WHERE m.user.userId = :userId
             @Param("year") Integer year,
             @Param("month") Integer month,
             @Param("amount") BigDecimal amount
+    );
+
+
+    @Query("""
+    SELECT mts.month, mts.totalSavings
+    FROM MonthlyTransactionSummary mts
+    WHERE mts.user.id = :userId
+      AND mts.year = :year
+    ORDER BY mts.month ASC
+""")
+    List<Object[]> getMonthlySavings(
+            @Param("userId") Integer userId,
+            @Param("year") Integer year
+    );
+
+    @Query("""
+    SELECT mts.month, mts.totalNeedExpense, mts.totalWantExpense
+    FROM MonthlyTransactionSummary mts
+    WHERE mts.user.id = :userId
+      AND mts.year = :year
+    ORDER BY mts.month ASC
+""")
+    List<Object[]> getMonthlyNeedsWants(
+            @Param("userId") Integer userId,
+            @Param("year") Integer year
+    );
+
+    @Query("""
+    SELECT mts.month, mts.totalIncome, mts.totalExpense
+    FROM MonthlyTransactionSummary mts
+    WHERE mts.user.id = :userId
+      AND mts.year = :year
+    ORDER BY mts.month ASC
+""")
+    List<Object[]> getMonthlyIncomeVsExpense(
+            @Param("userId") Integer userId,
+            @Param("year") Integer year
     );
 }

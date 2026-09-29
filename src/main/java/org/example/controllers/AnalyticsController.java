@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.*;
 import org.example.services.AnalyticsService;
+import org.example.utils.AuthenticationUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,22 +17,37 @@ import java.util.List;
 public class AnalyticsController {
     private final AnalyticsService analyticsService;
 
-    @GetMapping("/monthly-spendings")
-    public ResponseEntity<APIResponse<List<MonthlySpendingResponse>>> getMonthWise(@Valid @RequestBody MonthlySpendingRequest monthlySpendingRequest){
+    @GetMapping("/monthly-savings/user")
+    public ResponseEntity<APIResponse<List<MonthlySpendingResponse>>> getMonthlySavings(@RequestParam("year") Integer year){
+        Integer userId= AuthenticationUtil.getCurrentUserId();
         List<MonthlySpendingResponse> response =
-                analyticsService.getMonthlySpendings(monthlySpendingRequest);
+                analyticsService.getMonthlySavings(userId,year);
 
         APIResponse<List<MonthlySpendingResponse>> apiResponse=new APIResponse<>();
         apiResponse.setSuccess(true);
         apiResponse.setData(response);
-        apiResponse.setMessage("Monthly spendings fetched successfully");
+        apiResponse.setMessage("Monthly savings fetched successfully");
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/monthly-needs-wants")
-    public ResponseEntity<APIResponse<List<MonthlyNeedsWantsResponse>>> getMonthNeedsWants(@Valid @RequestBody MonthlySpendingRequest monthlySpendingRequest){
+    @GetMapping("/month-stats/user")
+    public ResponseEntity<APIResponse<MonthStatsResponse>> getMonthStats(@RequestParam("month") Integer month,@RequestParam("year") Integer year){
+        Integer userId= AuthenticationUtil.getCurrentUserId();
+        MonthStatsResponse response =
+                analyticsService.getMonthStats(userId,month,year);
+
+        APIResponse<MonthStatsResponse> apiResponse=new APIResponse<>();
+        apiResponse.setSuccess(true);
+        apiResponse.setData(response);
+        apiResponse.setMessage("Monthly savings fetched successfully");
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/monthly-needs-wants/user")
+    public ResponseEntity<APIResponse<List<MonthlyNeedsWantsResponse>>> getMonthNeedsWants(@RequestParam("year") Integer year){
+        Integer userId= AuthenticationUtil.getCurrentUserId();
         List<MonthlyNeedsWantsResponse> response =
-                analyticsService.getMonthlyNeedsWants(monthlySpendingRequest);
+                analyticsService.getMonthlyNeedsWants(userId,year);
 
         APIResponse<List<MonthlyNeedsWantsResponse>> apiResponse=new APIResponse<>();
         apiResponse.setSuccess(true);
@@ -40,10 +56,11 @@ public class AnalyticsController {
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/monthly-category")
-    public ResponseEntity<APIResponse<List<MonthlyCategoryResponse>>> getCategoryWise(@Valid @RequestBody MonthlyCategoryRequest monthlyCategoryRequest){
+    @GetMapping("/monthly-category/user")
+    public ResponseEntity<APIResponse<List<MonthlyCategoryResponse>>> getCategoryWise(@RequestParam("year") Integer year,@RequestParam("month") Integer month){
+        Integer userId= AuthenticationUtil.getCurrentUserId();
         List<MonthlyCategoryResponse> response =
-                analyticsService.getCategoryWise(monthlyCategoryRequest);
+                analyticsService.getCategoryWise(userId,year,month);
 
         APIResponse<List<MonthlyCategoryResponse>> apiResponse=new APIResponse<>();
         apiResponse.setSuccess(true);
@@ -52,10 +69,11 @@ public class AnalyticsController {
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/income-vs-expense")
-    public ResponseEntity<APIResponse<List<MonthlyIncomeExpenseReponse>>> getMonthlyIncomeExpense(@Valid @RequestBody MonthlySpendingRequest monthlySpendingRequest){
+    @GetMapping("/income-vs-expense/user")
+    public ResponseEntity<APIResponse<List<MonthlyIncomeExpenseReponse>>> getMonthlyIncomeExpense(@RequestParam("year") Integer year){
+        Integer userId= AuthenticationUtil.getCurrentUserId();
         List<MonthlyIncomeExpenseReponse> response =
-                analyticsService.getMonthlyIncomeVsExpense(monthlySpendingRequest);
+                analyticsService.getMonthlyIncomeVsExpense(userId,year);
 
         APIResponse<List<MonthlyIncomeExpenseReponse>> apiResponse=new APIResponse<>();
         apiResponse.setSuccess(true);
