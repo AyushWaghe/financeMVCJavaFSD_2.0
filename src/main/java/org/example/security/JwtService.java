@@ -23,6 +23,7 @@ public class JwtService {
     }
 
     public String generateAccessToken(CustomUserDetails user){
+
         return Jwts.builder()
                 .subject(user.getUsername().toString())  //Subject claim means this tell what is this jwt about like whom does it belong to.
                 .claim("userId",user.getUserId())
