@@ -16,6 +16,7 @@ public class AuthenticationUtil {
 
 
         log.info("User id from Authentication Util is",(Integer) authentication.getPrincipal());
+        log.info("User id from Authentication Util is",authentication.getPrincipal());
        return (Integer) authentication.getPrincipal();
     }
 }
